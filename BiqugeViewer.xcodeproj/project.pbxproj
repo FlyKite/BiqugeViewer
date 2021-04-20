@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -54,7 +54,6 @@
 				49C733944128DA67AC955AAE /* Pods-BiqugeViewer.debug.xcconfig */,
 				BFA0FACA4A1476FAF4F018BC /* Pods-BiqugeViewer.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -80,13 +79,37 @@
 			isa = PBXGroup;
 			children = (
 				A6661A9F262EF68900311FDD /* AppDelegate.swift */,
-				A6661AA3262EF68900311FDD /* ViewController.swift */,
+				A6661ABA262EF7E000311FDD /* Controller */,
+				A6661ABB262EF7ED00311FDD /* Model */,
+				A6661ABC262EF7F100311FDD /* View */,
 				A6661AA5262EF68900311FDD /* Main.storyboard */,
 				A6661AA8262EF68A00311FDD /* Assets.xcassets */,
 				A6661AAA262EF68A00311FDD /* LaunchScreen.storyboard */,
 				A6661AAD262EF68A00311FDD /* Info.plist */,
 			);
 			path = BiqugeViewer;
+			sourceTree = "<group>";
+		};
+		A6661ABA262EF7E000311FDD /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				A6661AA3262EF68900311FDD /* ViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		A6661ABB262EF7ED00311FDD /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		A6661ABC262EF7F100311FDD /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
