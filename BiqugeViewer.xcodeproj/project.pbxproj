@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3838763244548BA32F475CC1 /* Pods_BiqugeViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64643B47B6E50095CFDEC7A8 /* Pods_BiqugeViewer.framework */; };
 		A6661AA0262EF68900311FDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6661A9F262EF68900311FDD /* AppDelegate.swift */; };
 		A6661AA4262EF68900311FDD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6661AA3262EF68900311FDD /* ViewController.swift */; };
 		A6661AA7262EF68900311FDD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A6661AA5262EF68900311FDD /* Main.storyboard */; };
@@ -15,6 +16,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		49C733944128DA67AC955AAE /* Pods-BiqugeViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BiqugeViewer.debug.xcconfig"; path = "Target Support Files/Pods-BiqugeViewer/Pods-BiqugeViewer.debug.xcconfig"; sourceTree = "<group>"; };
+		64643B47B6E50095CFDEC7A8 /* Pods_BiqugeViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BiqugeViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6661A9C262EF68800311FDD /* BiqugeViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BiqugeViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6661A9F262EF68900311FDD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A6661AA3262EF68900311FDD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -22,6 +25,7 @@
 		A6661AA8262EF68A00311FDD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A6661AAB262EF68A00311FDD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A6661AAD262EF68A00311FDD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BFA0FACA4A1476FAF4F018BC /* Pods-BiqugeViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BiqugeViewer.release.xcconfig"; path = "Target Support Files/Pods-BiqugeViewer/Pods-BiqugeViewer.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,17 +33,38 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3838763244548BA32F475CC1 /* Pods_BiqugeViewer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4AC287FFA83EE5D82160FFFD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				64643B47B6E50095CFDEC7A8 /* Pods_BiqugeViewer.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		650583A56F2B3127F2D98D35 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				49C733944128DA67AC955AAE /* Pods-BiqugeViewer.debug.xcconfig */,
+				BFA0FACA4A1476FAF4F018BC /* Pods-BiqugeViewer.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		A6661A93262EF68800311FDD = {
 			isa = PBXGroup;
 			children = (
 				A6661A9E262EF68800311FDD /* BiqugeViewer */,
 				A6661A9D262EF68800311FDD /* Products */,
+				650583A56F2B3127F2D98D35 /* Pods */,
+				4AC287FFA83EE5D82160FFFD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -71,9 +96,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A6661AB0262EF68A00311FDD /* Build configuration list for PBXNativeTarget "BiqugeViewer" */;
 			buildPhases = (
+				0ABCDFD39414F265B3213507 /* [CP] Check Pods Manifest.lock */,
 				A6661A98262EF68800311FDD /* Sources */,
 				A6661A99262EF68800311FDD /* Frameworks */,
 				A6661A9A262EF68800311FDD /* Resources */,
+				6025D403A77C383DED0907C9 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -128,6 +155,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0ABCDFD39414F265B3213507 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BiqugeViewer-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6025D403A77C383DED0907C9 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-BiqugeViewer/Pods-BiqugeViewer-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-BiqugeViewer/Pods-BiqugeViewer-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BiqugeViewer/Pods-BiqugeViewer-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A6661A98262EF68800311FDD /* Sources */ = {
@@ -279,6 +348,7 @@
 		};
 		A6661AB1262EF68A00311FDD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 49C733944128DA67AC955AAE /* Pods-BiqugeViewer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -300,6 +370,7 @@
 		};
 		A6661AB2262EF68A00311FDD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BFA0FACA4A1476FAF4F018BC /* Pods-BiqugeViewer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
