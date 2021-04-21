@@ -8,6 +8,25 @@
 import Foundation
 import SwiftSoup
 
+struct NovelChapter {
+    let title: String
+    let link: String
+    
+    static func handle(from html: String) throws -> [NovelChapter] {
+        let doc = try SwiftSoup.parse(html)
+        guard let list = try doc.select("ul.chapter").last() else {
+            throw NSError(domain: "Chapter list not found", code: -999, userInfo: nil)
+        }
+        var result: [NovelChapter] = []
+        for child in list.children() {
+            guard child.tagName() == "li" else { continue }
+            guard let link = try? child.getElementsByTag("a").first() else { continue }
+            result.append(NovelChapter(title: try link.text(), link: try link.attr("href")))
+        }
+        return result
+    }
+}
+
 struct Novel {
     let link: String
     let html: String

@@ -24,6 +24,33 @@ class Network {
     
     static let host: String = "https://m.biquge.com.cn"
     
+    static func getNovelChapterList(novelId: String, page: Int, completion: ((Result<[NovelChapter], Error>) -> Void)?) {
+        var url = host.appending("/book/\(novelId)/")
+        if page > 1 {
+            url.append("index_\(page).html")
+        }
+        let task = AF.request(url).responseString { (response) in
+            switch response.result {
+            case let .success(html):
+                DispatchQueue.global().async {
+                    let result: Result<[NovelChapter], Error>
+                    do {
+                        let novelChapters = try NovelChapter.handle(from: html)
+                        result = .success(novelChapters)
+                    } catch {
+                        result = .failure(error)
+                    }
+                    DispatchQueue.main.async {
+                        completion?(result)
+                    }
+                }
+            case let .failure(error):
+                completion?(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
     static func getNovelPage(path: String, completion: ((Result<Novel, Error>) -> Void)?) {
         let url = host.appending(path)
         let task = AF.request(url).responseString { (response) in
