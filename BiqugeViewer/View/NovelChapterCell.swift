@@ -38,5 +38,11 @@ class NovelChapterCell: UITableViewCell {
             make.left.equalToSuperview().offset(16)
             make.centerY.equalToSuperview()
         }
+        
+        ThemeManager.shared.register(object: self) { [weak self] (theme) in
+            guard let self = self else { return }
+            self.nameLabel.textColor = theme.textColor
+            self.backgroundColor = theme.backgroundColor
+        }
     }
 }

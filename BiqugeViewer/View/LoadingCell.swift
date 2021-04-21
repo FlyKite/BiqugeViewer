@@ -64,5 +64,11 @@ class LoadingCell: UITableViewCell {
         stack.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
         }
+        
+        ThemeManager.shared.register(object: self) { [weak self] (theme) in
+            guard let self = self else { return }
+            self.tipsLabel.textColor = theme.textColor
+            self.backgroundColor = theme.backgroundColor
+        }
     }
 }

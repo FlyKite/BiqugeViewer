@@ -12,7 +12,7 @@ class NovelCell: UITableViewCell {
     static let contentAttributes: [NSAttributedString.Key: Any] = {
         let pStyle = NSMutableParagraphStyle()
         pStyle.lineSpacing = 12
-        return [.paragraphStyle: pStyle, .font: UIFont.systemFont(ofSize: 18), .foregroundColor: UIColor.white]
+        return [.paragraphStyle: pStyle, .font: UIFont.systemFont(ofSize: 18)]
     }()
     
     static func size(for novel: Novel) -> CGSize {
@@ -82,6 +82,14 @@ class NovelCell: UITableViewCell {
         textView.snp.makeConstraints { (make) in
             make.top.equalTo(titleLabel.snp.bottom)
             make.left.right.bottom.equalToSuperview()
+        }
+        
+        ThemeManager.shared.register(object: self) { [weak self] (theme) in
+            guard let self = self else { return }
+            self.titleLabel.textColor = theme.textColor
+            self.textView.textColor = theme.textColor
+            self.textView.backgroundColor = theme.backgroundColor
+            self.backgroundColor = theme.backgroundColor
         }
     }
 }

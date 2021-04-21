@@ -18,7 +18,6 @@ class ChapterListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        navigationController?.navigationBar.isHidden = true
         loadData()
     }
     
@@ -40,6 +39,10 @@ class ChapterListViewController: UIViewController {
             }
             self.tableView.reloadData()
         }
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return ThemeManager.shared.currentTheme.statusBarStyle
     }
 }
 
@@ -96,6 +99,11 @@ extension ChapterListViewController {
         
         tableView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
+        }
+        
+        ThemeManager.shared.register(object: self) { [weak self] (theme) in
+            guard let self = self else { return }
+            self.tableView.backgroundColor = theme.backgroundColor
         }
     }
 }

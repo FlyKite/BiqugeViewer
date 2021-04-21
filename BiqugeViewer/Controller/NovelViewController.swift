@@ -34,16 +34,6 @@ class NovelViewController: UIViewController {
         loadData()
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        navigationController?.setNavigationBarHidden(true, animated: true)
-//    }
-//    
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        navigationController?.setNavigationBarHidden(false, animated: true)
-//    }
-    
     private func loadData() {
         let link = novels.last?.nextChapterLink ?? self.link
         currentState = .loading
@@ -58,6 +48,10 @@ class NovelViewController: UIViewController {
             }
             self.tableView.reloadData()
         }
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return ThemeManager.shared.currentTheme.statusBarStyle
     }
 }
 
@@ -128,6 +122,11 @@ extension NovelViewController {
         
         tableView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
+        }
+        
+        ThemeManager.shared.register(object: self) { [weak self] (theme) in
+            guard let self = self else { return }
+            self.tableView.backgroundColor = theme.backgroundColor
         }
     }
 }

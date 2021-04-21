@@ -12,7 +12,7 @@
         <!--Navigation Controller-->
         <scene sceneID="FMx-BX-eJz">
             <objects>
-                <navigationController id="gnc-sw-aPC" sceneMemberID="viewController">
+                <navigationController id="gnc-sw-aPC" customClass="NavigationController" customModule="BiqugeViewer" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="M4O-Jn-YiY">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
