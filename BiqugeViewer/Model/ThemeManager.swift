@@ -5,7 +5,7 @@
 //  Created by FlyKite on 2021/4/21.
 //
 
-import Foundation
+import UIKit
 
 enum ThemeType: String, DefaultsCustomType {
     case white

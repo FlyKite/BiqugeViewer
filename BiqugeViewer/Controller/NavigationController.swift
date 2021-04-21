@@ -12,6 +12,13 @@ class NavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationBar.isHidden = true
+        
+        ThemeManager.shared.register(object: self) { [weak self] (theme) in
+            guard let self = self else { return }
+            if #available(iOS 13.0, *) {
+                self.overrideUserInterfaceStyle = theme.userInterfaceStyle
+            }
+        }
     }
     
     override var childForStatusBarStyle: UIViewController? {

@@ -22,8 +22,8 @@ class NovelViewController: UIViewController {
     }
     
     private let tableView: UITableView = UITableView()
+    private let loadingView: LoadingFooterView = LoadingFooterView(frame: CGRect(x: 0, y: 0, width: 0, height: 56))
     
-    private var currentState: LoadingCell.State = .stopped(tips: "")
     private var novels: [Novel] = []
     private var novelSizeCache: [String: CGSize] = [:]
 
@@ -35,15 +35,16 @@ class NovelViewController: UIViewController {
     }
     
     private func loadData() {
+        guard !loadingView.isLoading else { return }
         let link = novels.last?.nextChapterLink ?? self.link
-        currentState = .loading
+        loadingView.state = .loading
         Network.getNovelPage(path: link) { (result) in
             switch result {
             case let .success(novel):
-                self.currentState = .stopped(tips: "加载完成")
+                self.loadingView.state = .stopped(tips: "加载完成")
                 self.novels.append(novel)
             case let .failure(error):
-                self.currentState = .stopped(tips: "加载失败，点击重试")
+                self.loadingView.state = .stopped(tips: "加载失败，点击重试")
                 print(error)
             }
             self.tableView.reloadData()
@@ -57,15 +58,10 @@ class NovelViewController: UIViewController {
 
 extension NovelViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return novels.count + 1
+        return novels.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard indexPath.row < novels.count else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "loadingCell", for: indexPath) as! LoadingCell
-            cell.state = currentState
-            return cell
-        }
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! NovelCell
         let novel = novels[indexPath.row]
         cell.title = novel.title
@@ -79,9 +75,6 @@ extension NovelViewController: UITableViewDataSource {
 
 extension NovelViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard indexPath.row < novels.count else {
-            return 56
-        }
         let novel = novels[indexPath.row]
         if let size = novelSizeCache[novel.link] {
             return size.height
@@ -92,9 +85,6 @@ extension NovelViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard indexPath.row < novels.count else {
-            return 56
-        }
         let novel = novels[indexPath.row]
         if let size = novelSizeCache[novel.link] {
             return size.height
@@ -111,12 +101,11 @@ extension NovelViewController: UITableViewDelegate {
 
 extension NovelViewController {
     private func setupViews() {
-        tableView.register(LoadingCell.self, forCellReuseIdentifier: "loadingCell")
         tableView.register(NovelCell.self, forCellReuseIdentifier: "cell")
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorInset = .zero
-        tableView.tableFooterView = UIView()
+        tableView.tableFooterView = loadingView
         
         view.addSubview(tableView)
         

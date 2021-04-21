@@ -27,6 +27,7 @@ class NovelChapterCell: UITableViewCell {
     }
     
     private func setupViews() {
+        selectionStyle = .gray
         accessoryType = .disclosureIndicator
         
         nameLabel.font = UIFont.systemFont(ofSize: 17)

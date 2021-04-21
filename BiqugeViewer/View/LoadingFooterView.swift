@@ -1,5 +1,5 @@
 //
-//  LoadingCell.swift
+//  LoadingFooterView.swift
 //  BiqugeViewer
 //
 //  Created by FlyKite on 2021/4/21.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LoadingCell: UITableViewCell {
+class LoadingFooterView: UIView {
     
     enum State {
         case loading
@@ -29,6 +29,13 @@ class LoadingCell: UITableViewCell {
         }
     }
     
+    var isLoading: Bool {
+        switch state {
+        case .loading: return true
+        case .stopped: return false
+        }
+    }
+    
     private let loadingView: UIActivityIndicatorView = {
         if #available(iOS 13, *) {
             return UIActivityIndicatorView(style: .medium)
@@ -37,8 +44,8 @@ class LoadingCell: UITableViewCell {
     }()
     private let tipsLabel: UILabel = UILabel()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupViews()
     }
     
@@ -48,8 +55,6 @@ class LoadingCell: UITableViewCell {
     }
     
     private func setupViews() {
-        selectionStyle = .none
-        
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.alignment = .center
@@ -57,7 +62,7 @@ class LoadingCell: UITableViewCell {
         
         loadingView.isHidden = true
         
-        contentView.addSubview(stack)
+        addSubview(stack)
         stack.addArrangedSubview(loadingView)
         stack.addArrangedSubview(tipsLabel)
         
@@ -68,7 +73,6 @@ class LoadingCell: UITableViewCell {
         ThemeManager.shared.register(object: self) { [weak self] (theme) in
             guard let self = self else { return }
             self.tipsLabel.textColor = theme.textColor
-            self.backgroundColor = theme.backgroundColor
         }
     }
 }

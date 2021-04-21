@@ -11,6 +11,8 @@ protocol Theme {
     var backgroundColor: UIColor { get }
     var textColor: UIColor { get }
     var statusBarStyle: UIStatusBarStyle { get }
+    @available(iOS 12.0, *)
+    var userInterfaceStyle: UIUserInterfaceStyle { get }
 }
 
 struct WhiteTheme: Theme {
@@ -22,6 +24,9 @@ struct WhiteTheme: Theme {
         }
         return .default
     }()
+    
+    @available(iOS 12.0, *)
+    var userInterfaceStyle: UIUserInterfaceStyle { .light }
 }
 
 struct YellowTheme: Theme {
@@ -33,6 +38,9 @@ struct YellowTheme: Theme {
         }
         return .default
     }()
+    
+    @available(iOS 12.0, *)
+    var userInterfaceStyle: UIUserInterfaceStyle { .light }
 }
 
 struct GreenTheme: Theme {
@@ -44,6 +52,9 @@ struct GreenTheme: Theme {
         }
         return .default
     }()
+    
+    @available(iOS 12.0, *)
+    var userInterfaceStyle: UIUserInterfaceStyle { .light }
 }
 
 struct PinkTheme: Theme {
@@ -55,10 +66,22 @@ struct PinkTheme: Theme {
         }
         return .default
     }()
+    
+    @available(iOS 12.0, *)
+    var userInterfaceStyle: UIUserInterfaceStyle { .light }
 }
 
 struct DarkTheme: Theme {
     let backgroundColor: UIColor = 0x3B4147.rgbColor
     let textColor: UIColor = 0x8794A3.rgbColor
     let statusBarStyle: UIStatusBarStyle = .lightContent
+    
+    @available(iOS 12.0, *)
+    var userInterfaceStyle: UIUserInterfaceStyle {
+        if #available(iOS 13, *) {
+            return .dark
+        } else {
+            return .light
+        }
+    }
 }
