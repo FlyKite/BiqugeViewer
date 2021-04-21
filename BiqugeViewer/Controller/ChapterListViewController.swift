@@ -42,6 +42,10 @@ class ChapterListViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return ThemeManager.shared.currentTheme.statusBarStyle
     }
+    
+    @objc private func retryLoadData() {
+        loadData()
+    }
 }
 
 extension ChapterListViewController: UITableViewDataSource {
@@ -83,6 +87,8 @@ extension ChapterListViewController {
         tableView.estimatedRowHeight = 56
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         tableView.tableFooterView = loadingView
+        
+        loadingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(retryLoadData)))
         
         view.addSubview(tableView)
         

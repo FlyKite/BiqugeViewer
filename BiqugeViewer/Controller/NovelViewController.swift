@@ -54,6 +54,10 @@ class NovelViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return ThemeManager.shared.currentTheme.statusBarStyle
     }
+    
+    @objc private func retryLoadData() {
+        loadData()
+    }
 }
 
 extension NovelViewController: UITableViewDataSource {
@@ -106,6 +110,8 @@ extension NovelViewController {
         tableView.delegate = self
         tableView.separatorInset = .zero
         tableView.tableFooterView = loadingView
+        
+        loadingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(retryLoadData)))
         
         view.addSubview(tableView)
         
