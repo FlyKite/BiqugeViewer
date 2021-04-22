@@ -86,6 +86,7 @@ class NovelViewController: UIViewController {
         navigationBar.isExpanded = show
         view.layoutIfNeeded()
         UIView.animate(withDuration: 0.35, delay: 0, options: .curveEaseOut) {
+            self.settingView.alpha = show ? 1 : 0
             self.settingView.snp.remakeConstraints { (make) in
                 if show {
                     make.left.right.bottom.equalToSuperview()
@@ -152,8 +153,12 @@ extension NovelViewController: UITableViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.isDragging && navigationBar.isExpanded && settingView.isHidden {
-            navigationBar.isExpanded = false
+        if scrollView.isDragging && navigationBar.isExpanded {
+            if settingView.isHidden {
+                navigationBar.isExpanded = false
+            } else {
+                toggleSettingView()
+            }
         }
         guard let cell = tableView.visibleCells.first as? NovelCell else { return }
         navigationBar.title = cell.title
@@ -171,7 +176,13 @@ extension NovelViewController {
         
         loadingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(retryLoadData)))
         
+        navigationBar.onBackClick = { [weak self] in
+            guard let self = self else { return }
+            self.navigationController?.popViewController(animated: true)
+        }
+        
         settingView.isHidden = true
+        settingView.alpha = 0
         
         view.addSubview(tableView)
         view.addSubview(navigationBar)
@@ -183,8 +194,7 @@ extension NovelViewController {
         
         tableView.snp.makeConstraints { (make) in
             make.top.equalTo(view.safeAreaLayoutGuide)
-            make.left.right.equalToSuperview()
-            make.bottom.equalTo(settingView.snp.top)
+            make.left.right.bottom.equalToSuperview()
         }
         
         settingView.snp.makeConstraints { (make) in

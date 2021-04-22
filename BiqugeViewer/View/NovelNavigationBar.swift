@@ -9,6 +9,8 @@ import UIKit
 
 class NovelNavigationBar: UIView {
     
+    var onBackClick: (() -> Void)?
+    
     var title: String? {
         get { titleLabel.text }
         set { titleLabel.text = newValue}
@@ -38,6 +40,7 @@ class NovelNavigationBar: UIView {
     private func setupViews() {
         backButton.setImage(#imageLiteral(resourceName: "arrow_left"), for: .normal)
         backButton.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        backButton.addTarget(self, action: #selector(backButtonClicked), for: .touchUpInside)
         
         titleLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         
@@ -67,6 +70,10 @@ class NovelNavigationBar: UIView {
             self.backButton.tintColor = theme.textColor
             self.backgroundColor = theme.navigationBackgroundColor
         }
+    }
+    
+    @objc private func backButtonClicked() {
+        onBackClick?()
     }
     
     private func updateStyle(isExpanded: Bool) {
