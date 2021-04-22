@@ -24,6 +24,7 @@
 		A6D5C9A2262FEB2F004BC7C1 /* ChapterListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D5C9A1262FEB2F004BC7C1 /* ChapterListViewController.swift */; };
 		A6D5C9A9262FFC9B004BC7C1 /* NovelChapterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D5C9A8262FFC9B004BC7C1 /* NovelChapterCell.swift */; };
 		A6D5C9AD262FFD20004BC7C1 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D5C9AC262FFD20004BC7C1 /* Color.swift */; };
+		A6DCD5C8263117FD00C7A9F3 /* NovelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DCD5C7263117FD00C7A9F3 /* NovelManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 		A6D5C9A1262FEB2F004BC7C1 /* ChapterListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterListViewController.swift; sourceTree = "<group>"; };
 		A6D5C9A8262FFC9B004BC7C1 /* NovelChapterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelChapterCell.swift; sourceTree = "<group>"; };
 		A6D5C9AC262FFD20004BC7C1 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		A6DCD5C7263117FD00C7A9F3 /* NovelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelManager.swift; sourceTree = "<group>"; };
 		BFA0FACA4A1476FAF4F018BC /* Pods-BiqugeViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BiqugeViewer.release.xcconfig"; path = "Target Support Files/Pods-BiqugeViewer/Pods-BiqugeViewer.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -128,6 +130,7 @@
 			children = (
 				A614AD2E262EF8A900AB9725 /* Network.swift */,
 				A6D5C98F262EF8F4004BC7C1 /* Novel.swift */,
+				A6DCD5C7263117FD00C7A9F3 /* NovelManager.swift */,
 				A6001894263021A5004CA630 /* Theme.swift */,
 				A600189E26303E03004CA630 /* ThemeManager.swift */,
 			);
@@ -275,6 +278,7 @@
 				A6D5C997262F00C1004BC7C1 /* NovelCell.swift in Sources */,
 				A60018A2263040C5004CA630 /* LoadingFooterView.swift in Sources */,
 				A600189F26303E03004CA630 /* ThemeManager.swift in Sources */,
+				A6DCD5C8263117FD00C7A9F3 /* NovelManager.swift in Sources */,
 				A6D5C9A9262FFC9B004BC7C1 /* NovelChapterCell.swift in Sources */,
 				A6D5C990262EF8F4004BC7C1 /* Novel.swift in Sources */,
 				A6001895263021A5004CA630 /* Theme.swift in Sources */,

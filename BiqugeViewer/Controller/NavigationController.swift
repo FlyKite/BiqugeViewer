@@ -13,6 +13,17 @@ class NavigationController: UINavigationController {
         super.viewDidLoad()
         navigationBar.isHidden = true
         
+        var viewControllers: [UIViewController] = []
+//        if let novelId = NovelManager.lastViewNovelId {
+            let controller = ChapterListViewController(novelId: "32883")
+            viewControllers.append(controller)
+//        }
+        if let link = NovelManager.lastViewNovelLink {
+            let controller = NovelViewController(link: link)
+            viewControllers.append(controller)
+        }
+        setViewControllers(viewControllers, animated: false)
+        
         ThemeManager.shared.register(object: self) { [weak self] (theme) in
             guard let self = self else { return }
             if #available(iOS 13.0, *) {

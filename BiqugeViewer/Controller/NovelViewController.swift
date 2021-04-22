@@ -29,9 +29,13 @@ class NovelViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        NovelManager.lastViewNovelLink = link
         setupViews()
-        
         loadData()
+    }
+    
+    deinit {
+        NovelManager.lastViewNovelLink = nil
     }
     
     private func loadData() {
@@ -97,6 +101,7 @@ extension NovelViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        NovelManager.lastViewNovelLink = novels[indexPath.row].link
         if indexPath.row == novels.count - 1 {
             loadData()
         }
