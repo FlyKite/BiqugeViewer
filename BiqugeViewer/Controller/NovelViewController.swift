@@ -72,9 +72,13 @@ class NovelViewController: UIViewController {
         let location = tap.location(in: view)
         let percent = location.y / view.bounds.height
         if percent < 0.33 {
-            
+            var offset = tableView.contentOffset
+            offset.y = max(0, offset.y - tableView.bounds.height + 80)
+            tableView.setContentOffset(offset, animated: true)
         } else if percent > 0.66 {
-            
+            var offset = tableView.contentOffset
+            offset.y += tableView.bounds.height - 80
+            tableView.setContentOffset(offset, animated: true)
         } else {
             toggleSettingView()
         }
