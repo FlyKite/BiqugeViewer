@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum ThemeType: String, DefaultsCustomType {
+enum ThemeType: String, DefaultsCustomType, CaseIterable {
     case white
     case yellow
     case green
@@ -41,7 +41,7 @@ class ThemeManager {
     private(set) lazy var currentTheme: Theme = currentThemeType.theme
     
     @DefaultsProperty(key: "currentThemeType", defaultValue: .yellow)
-    private var currentThemeType: ThemeType
+    private(set) var currentThemeType: ThemeType
     
     private var observers: [ThemeObserver] = []
     private let queue: DispatchQueue = DispatchQueue(label: "com.flykite.BiqugeViewer.ThemeManager")
