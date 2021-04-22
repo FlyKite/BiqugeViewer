@@ -65,8 +65,6 @@ class NovelNavigationBar: UIView {
             guard let self = self else { return }
             self.titleLabel.textColor = theme.textColor
             self.backButton.tintColor = theme.textColor
-//            self.backButton.setTitleColor(theme.textColor, for: .normal)
-//            self.backButton.setTitleColor(theme.textColor.withAlphaComponent(0.6), for: .highlighted)
             self.backgroundColor = theme.navigationBackgroundColor
         }
     }

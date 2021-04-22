@@ -9,6 +9,8 @@ import UIKit
 
 class NovelCell: UITableViewCell {
     
+    var onTap: ((UITapGestureRecognizer) -> Void)?
+    
     static var contentAttributes: [NSAttributedString.Key: Any] {
         let theme = ThemeManager.shared.currentTheme
         let pStyle = NSMutableParagraphStyle()
@@ -46,8 +48,10 @@ class NovelCell: UITableViewCell {
         }
     }
     
-    private let titleLabel = UILabel()
-    private let textView = UITextView()
+    private let titleLabel: UILabel = UILabel()
+    private let textView: UITextView = UITextView()
+    private let textViewTap: UITapGestureRecognizer = UITapGestureRecognizer()
+    private let textViewDoubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -73,6 +77,17 @@ class NovelCell: UITableViewCell {
         textView.textContainerInset = UIEdgeInsets(top: 32, left: 0, bottom: 16, right: 0)
         textView.textContainer.lineFragmentPadding = 0
         
+        textViewTap.addTarget(self, action: #selector(handleTap))
+        textViewTap.delegate = self
+        textViewTap.require(toFail: textViewDoubleTap)
+        textViewDoubleTap.numberOfTapsRequired = 2
+        textViewDoubleTap.delegate = self
+        textView.addGestureRecognizer(textViewTap)
+        textView.addGestureRecognizer(textViewDoubleTap)
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        contentView.addGestureRecognizer(tap)
+        
         contentView.addSubview(titleLabel)
         contentView.addSubview(textView)
         
@@ -97,5 +112,18 @@ class NovelCell: UITableViewCell {
                 self.textView.attributedText = NSAttributedString(string: content.string, attributes: NovelCell.contentAttributes)
             }
         }
+    }
+    
+    @objc private func handleTap(_ tap: UITapGestureRecognizer) {
+        onTap?(tap)
+    }
+    
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer == textViewTap {
+            return textView.selectedRange.length == 0
+        } else if gestureRecognizer == textViewDoubleTap {
+            return textView.selectedRange.length == 0
+        }
+        return super.gestureRecognizerShouldBegin(gestureRecognizer)
     }
 }

@@ -67,6 +67,41 @@ class NovelViewController: UIViewController {
     @objc private func retryLoadData() {
         loadData()
     }
+    
+    private func handleTap(_ tap: UITapGestureRecognizer) {
+        let location = tap.location(in: view)
+        let percent = location.y / view.bounds.height
+        if percent < 0.33 {
+            
+        } else if percent > 0.66 {
+            
+        } else {
+            toggleSettingView()
+        }
+    }
+    
+    @objc private func toggleSettingView() {
+        let show = settingView.isHidden
+        settingView.isHidden = false
+        navigationBar.isExpanded = show
+        view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.35, delay: 0, options: .curveEaseOut) {
+            self.settingView.snp.remakeConstraints { (make) in
+                if show {
+                    make.left.right.bottom.equalToSuperview()
+                } else {
+                    make.top.equalTo(self.view.snp.bottom)
+                    make.left.right.equalToSuperview()
+                }
+            }
+            self.view.layoutIfNeeded()
+        } completion: { (finished) in
+            if !show {
+                self.settingView.isHidden = true
+            }
+        }
+
+    }
 }
 
 extension NovelViewController: UITableViewDataSource {
@@ -81,6 +116,10 @@ extension NovelViewController: UITableViewDataSource {
         cell.novelContent = NSAttributedString(string: novel.content, attributes: NovelCell.contentAttributes)
         if let size = novelSizeCache[novel.link] {
             cell.horizontalPadding = (view.bounds.width - size.width) / 2
+        }
+        cell.onTap = { [weak self] (tap) in
+            guard let self = self else { return }
+            self.handleTap(tap)
         }
         return cell
     }
@@ -113,7 +152,7 @@ extension NovelViewController: UITableViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.isDragging && navigationBar.isExpanded && settingView.isPanelHidden {
+        if scrollView.isDragging && navigationBar.isExpanded && settingView.isHidden {
             navigationBar.isExpanded = false
         }
         guard let cell = tableView.visibleCells.first as? NovelCell else { return }
@@ -127,12 +166,15 @@ extension NovelViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorInset = .zero
+        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 44))
         tableView.tableFooterView = loadingView
         
         loadingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(retryLoadData)))
         
-        view.addSubview(navigationBar)
+        settingView.isHidden = true
+        
         view.addSubview(tableView)
+        view.addSubview(navigationBar)
         view.addSubview(settingView)
         
         navigationBar.snp.makeConstraints { (make) in
@@ -140,12 +182,14 @@ extension NovelViewController {
         }
         
         tableView.snp.makeConstraints { (make) in
-            make.top.equalTo(navigationBar.snp.bottom)
-            make.left.right.bottom.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.left.right.equalToSuperview()
+            make.bottom.equalTo(settingView.snp.top)
         }
         
         settingView.snp.makeConstraints { (make) in
-            make.edges.equalTo(tableView)
+            make.top.equalTo(view.snp.bottom)
+            make.left.right.equalToSuperview()
         }
         
         ThemeManager.shared.register(object: self) { [weak self] (theme) in
