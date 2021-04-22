@@ -205,6 +205,15 @@ extension NovelViewController {
         ThemeManager.shared.register(object: self) { [weak self] (theme) in
             guard let self = self else { return }
             self.tableView.backgroundColor = theme.backgroundColor
+        } onFontSizeChanged: { [weak self] (fontSize) in
+            guard let self = self else { return }
+            self.novelSizeCache = [:]
+            self.tableView.reloadData()
+        } onLineSpacingChanged: { [weak self] (lineSpacing) in
+            guard let self = self else { return }
+            self.novelSizeCache = [:]
+            self.tableView.reloadData()
         }
+
     }
 }

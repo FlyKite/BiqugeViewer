@@ -14,9 +14,9 @@ class NovelCell: UITableViewCell {
     static var contentAttributes: [NSAttributedString.Key: Any] {
         let theme = ThemeManager.shared.currentTheme
         let pStyle = NSMutableParagraphStyle()
-        pStyle.lineSpacing = 12
+        pStyle.lineSpacing = ThemeManager.shared.lineSpacing.value
         return [.paragraphStyle: pStyle,
-                .font: UIFont.systemFont(ofSize: 18),
+                .font: UIFont.systemFont(ofSize: ThemeManager.shared.fontSize.value),
                 .foregroundColor: theme.textColor]
     }
     
@@ -111,6 +111,10 @@ class NovelCell: UITableViewCell {
             if let content = self.novelContent {
                 self.textView.attributedText = NSAttributedString(string: content.string, attributes: NovelCell.contentAttributes)
             }
+        } onFontSizeChanged: { (fontSize) in
+            
+        } onLineSpacingChanged: { (lineSpacing) in
+            
         }
     }
     
