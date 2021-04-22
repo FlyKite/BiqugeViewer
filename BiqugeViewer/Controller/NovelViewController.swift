@@ -21,6 +21,8 @@ class NovelViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private let navigationBar: NovelNavigationBar = NovelNavigationBar()
+    private let settingView: NovelSettingView = NovelSettingView()
     private let tableView: UITableView = UITableView()
     private let loadingView: LoadingFooterView = LoadingFooterView(frame: CGRect(x: 0, y: 0, width: 0, height: 56))
     
@@ -45,6 +47,9 @@ class NovelViewController: UIViewController {
         Network.getNovelPage(path: link) { (result) in
             switch result {
             case let .success(novel):
+                if self.navigationBar.title == nil {
+                    self.navigationBar.title = novel.title
+                }
                 self.loadingView.state = .stopped(tips: "加载完成")
                 self.novels.append(novel)
             case let .failure(error):
@@ -106,6 +111,14 @@ extension NovelViewController: UITableViewDelegate {
             loadData()
         }
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.isDragging && navigationBar.isExpanded && settingView.isPanelHidden {
+            navigationBar.isExpanded = false
+        }
+        guard let cell = tableView.visibleCells.first as? NovelCell else { return }
+        navigationBar.title = cell.title
+    }
 }
 
 extension NovelViewController {
@@ -118,10 +131,21 @@ extension NovelViewController {
         
         loadingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(retryLoadData)))
         
+        view.addSubview(navigationBar)
         view.addSubview(tableView)
+        view.addSubview(settingView)
+        
+        navigationBar.snp.makeConstraints { (make) in
+            make.top.left.right.equalToSuperview()
+        }
         
         tableView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
+            make.top.equalTo(navigationBar.snp.bottom)
+            make.left.right.bottom.equalToSuperview()
+        }
+        
+        settingView.snp.makeConstraints { (make) in
+            make.edges.equalTo(tableView)
         }
         
         ThemeManager.shared.register(object: self) { [weak self] (theme) in

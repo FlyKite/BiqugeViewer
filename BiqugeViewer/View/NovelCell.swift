@@ -9,11 +9,14 @@ import UIKit
 
 class NovelCell: UITableViewCell {
     
-    static let contentAttributes: [NSAttributedString.Key: Any] = {
+    static var contentAttributes: [NSAttributedString.Key: Any] {
+        let theme = ThemeManager.shared.currentTheme
         let pStyle = NSMutableParagraphStyle()
         pStyle.lineSpacing = 12
-        return [.paragraphStyle: pStyle, .font: UIFont.systemFont(ofSize: 18)]
-    }()
+        return [.paragraphStyle: pStyle,
+                .font: UIFont.systemFont(ofSize: 18),
+                .foregroundColor: theme.textColor]
+    }
     
     static func size(for novel: Novel) -> CGSize {
         let title = NSAttributedString(string: novel.title, attributes: [.font: UIFont.systemFont(ofSize: 28, weight: .medium)])
@@ -24,7 +27,7 @@ class NovelCell: UITableViewCell {
         let size = attrContent.boundingRect(with: CGSize(width: UIScreen.main.bounds.width - 20, height: .infinity),
                                             options: [.usesFontLeading, .usesLineFragmentOrigin],
                                             context: nil).size
-        return CGSize(width: ceil(size.width), height: ceil(titleHeight) + ceil(size.height) + 48)
+        return CGSize(width: ceil(size.width), height: ceil(titleHeight) + ceil(size.height) + 80)
     }
     
     var title: String? {
@@ -67,14 +70,14 @@ class NovelCell: UITableViewCell {
         textView.textAlignment = .justified
         textView.isEditable = false
         textView.isScrollEnabled = false
-        textView.textContainerInset = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
+        textView.textContainerInset = UIEdgeInsets(top: 32, left: 0, bottom: 16, right: 0)
         textView.textContainer.lineFragmentPadding = 0
         
         contentView.addSubview(titleLabel)
         contentView.addSubview(textView)
         
         titleLabel.snp.makeConstraints { (make) in
-            make.top.equalToSuperview().offset(16)
+            make.top.equalToSuperview().offset(32)
             make.left.equalToSuperview().offset(12)
             make.right.equalToSuperview().offset(-12)
         }
@@ -90,6 +93,9 @@ class NovelCell: UITableViewCell {
             self.textView.textColor = theme.textColor
             self.textView.backgroundColor = theme.backgroundColor
             self.backgroundColor = theme.backgroundColor
+            if let content = self.novelContent {
+                self.textView.attributedText = NSAttributedString(string: content.string, attributes: NovelCell.contentAttributes)
+            }
         }
     }
 }
