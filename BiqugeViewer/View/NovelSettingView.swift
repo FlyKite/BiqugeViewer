@@ -59,8 +59,7 @@ class NovelSettingView: UIView {
         }
         
         stackView.snp.makeConstraints { (make) in
-            make.top.equalToSuperview().offset(34)
-            make.left.equalToSuperview().offset(32)
+            make.top.left.equalToSuperview().offset(32)
             make.right.equalToSuperview().offset(-32)
             make.bottom.equalToSuperview().offset(-16)
         }
@@ -97,7 +96,7 @@ class NovelSettingView: UIView {
     private func setupThemes() -> UIStackView {
         let themeContainer = UIStackView()
         themeContainer.axis = .horizontal
-        themeContainer.spacing = (UIScreen.main.bounds.width - 64 - 80 - 36 * 5) / 4
+        themeContainer.distribution = .equalSpacing
         
         for (index, themeType) in ThemeType.allCases.enumerated() {
             let view = UIView()

@@ -142,7 +142,7 @@ extension NovelViewController: UITableViewDelegate {
         if let size = novelSizeCache[novel.link] {
             return size.height
         }
-        return 56
+        return UIScreen.main.bounds.height
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
