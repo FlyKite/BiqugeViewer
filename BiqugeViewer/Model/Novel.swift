@@ -8,6 +8,83 @@
 import Foundation
 import SwiftSoup
 
+struct HomeRecommend {
+    let category: String
+    let mainNovel: RecommendNovel?
+    let novels: [RecommendNovel]
+    
+    struct RecommendNovel {
+        let id: String
+        let title: String
+        let author: String
+        let introduce: String?
+    }
+    
+    static func handle(from html: String) throws -> [HomeRecommend] {
+        let doc = try SwiftSoup.parse(html)
+        let elements = try doc.select("div.article")
+        var recommends: [HomeRecommend] = []
+        for element in elements {
+            let title = try getTitle(element: element)
+            guard let block = try element.select("div.block").first() else { continue }
+            let mainNovel = try getMainNovel(element: block)
+            let novels = try getNovels(element: block)
+            recommends.append(HomeRecommend(category: title, mainNovel: mainNovel, novels: novels))
+        }
+        return recommends
+    }
+    
+    private static func getTitle(element: Element) throws -> String {
+        return try element.select("h2.title").select("span").first()?.text() ?? ""
+    }
+    
+    private static func getMainNovel(element: Element) throws -> RecommendNovel? {
+        guard let div = try element.select("div.block_txt").first() else { return nil }
+        guard let img = try element.select("div.block_img").select("a").first() else { return nil }
+        let id = try img.attr("href").replacingOccurrences(of: "book", with: "").replacingOccurrences(of: "/", with: "")
+        var title: String?
+        var author: String?
+        var introduce: String?
+        for element in div.children() {
+            if element.tagName() == "h2" {
+                title = try element.text()
+            } else if element.tagName() == "p" {
+                if !element.children().isEmpty() {
+                    let text = try element.text()
+                    if !text.isEmpty {
+                        introduce = text
+                    }
+                } else {
+                    author = try element.text().replacingOccurrences(of: "作者：", with: "")
+                }
+            }
+        }
+        return RecommendNovel(id: id, title: title ?? "", author: author ?? "", introduce: introduce ?? "")
+    }
+    
+    private static func getNovels(element: Element) throws -> [RecommendNovel] {
+        guard let list = try element.select("ul").first()?.select("li") else { return [] }
+        var results: [RecommendNovel] = []
+        for item in list {
+            let nodes = item.getChildNodes()
+            var id: String = ""
+            var title: String = ""
+            var author: String = ""
+            if let node = nodes.first as? Element, node.tagName() == "a" {
+                id = try node.attr("href").replacingOccurrences(of: "book", with: "").replacingOccurrences(of: "/", with: "")
+                title = try node.text()
+            }
+            if let node = nodes.last as? TextNode {
+                author = node.text().replacingOccurrences(of: "/", with: "")
+            }
+            if !id.isEmpty {
+                results.append(RecommendNovel(id: id, title: title, author: author, introduce: nil))
+            }
+        }
+        return results
+    }
+}
+
 struct NovelInfo {
     let title: String
     let author: String

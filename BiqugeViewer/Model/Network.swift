@@ -24,6 +24,29 @@ class Network {
     
     static let host: String = "https://m.biquge.com.cn"
     
+    static func getHomeRecommend(completion: ((Result<[HomeRecommend], Error>) -> Void)?) {
+        let task = AF.request(host).responseString { (response) in
+            switch response.result {
+            case let .success(html):
+                DispatchQueue.global().async {
+                    let result: Result<[HomeRecommend], Error>
+                    do {
+                        let novelChapters = try HomeRecommend.handle(from: html)
+                        result = .success(novelChapters)
+                    } catch {
+                        result = .failure(error)
+                    }
+                    DispatchQueue.main.async {
+                        completion?(result)
+                    }
+                }
+            case let .failure(error):
+                completion?(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
     static func getNovelChapterList(novelId: String, page: Int, completion: ((Result<NovelInfo, Error>) -> Void)?) {
         var url = host.appending("/book/\(novelId)/")
         if page > 1 {
