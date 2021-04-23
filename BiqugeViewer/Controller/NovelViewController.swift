@@ -111,7 +111,7 @@ extension NovelViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! NovelCell
+        let cell = tableView.dequeueReusableCell(NovelCell.self, for: indexPath)
         let novel = novels[indexPath.row]
         cell.title = novel.title
         cell.novelContent = NSAttributedString(string: novel.content, attributes: NovelCell.contentAttributes)
@@ -167,7 +167,7 @@ extension NovelViewController: UITableViewDelegate {
 
 extension NovelViewController {
     private func setupViews() {
-        tableView.register(NovelCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(NovelCell.self)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorInset = .zero

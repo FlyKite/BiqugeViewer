@@ -35,7 +35,7 @@ extension BookrackViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! NovelItemCell
+        let cell = collectionView.dequeueReusableCell(NovelItemCell.self, for: indexPath)
         
         return cell
     }
@@ -55,7 +55,7 @@ extension BookrackViewController {
         layout.minimumInteritemSpacing = 0
         layout.sectionInset = UIEdgeInsets(top: 16, left: 32, bottom: 16, right: 32)
         
-        collectionView.register(NovelItemCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(NovelItemCell.self)
         collectionView.dataSource = self
         collectionView.delegate = self
         view.addSubview(collectionView)

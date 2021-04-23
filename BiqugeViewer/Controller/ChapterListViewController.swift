@@ -92,7 +92,7 @@ extension ChapterListViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! NovelChapterCell
+        let cell = tableView.dequeueReusableCell(NovelChapterCell.self, for: indexPath)
         let chapter = novelChapters[indexPath.row]
         cell.name = chapter.title
         return cell
@@ -132,7 +132,7 @@ extension ChapterListViewController {
             self.present(controller, animated: true, completion: nil)
         }
         
-        tableView.register(NovelChapterCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(NovelChapterCell.self)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 56
