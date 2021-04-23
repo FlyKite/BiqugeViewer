@@ -10,6 +10,8 @@ import Kingfisher
 
 class NovelInfoView: UIView {
     
+    var chooseChapterPageAction: (() -> Void)?
+    
     func updateInfo(title: String, author: String, state: String, introduce: String, coverUrl: String) {
         titleLabel.text = title
         authorLabel.text = author
@@ -41,11 +43,23 @@ class NovelInfoView: UIView {
         introduceLabel.font = UIFont.systemFont(ofSize: 14)
         introduceLabel.numberOfLines = 0
         
+        let chapterLabel = UILabel()
+        chapterLabel.text = "章节列表"
+        chapterLabel.font = UIFont.systemFont(ofSize: 15)
+        
+        let chooseButton = UIButton()
+        chooseButton.setTitle("快速跳转", for: .normal)
+        chooseButton.addTarget(self, action: #selector(chooseButtonClicked), for: .touchUpInside)
+        chooseButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        chooseButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
         addSubview(coverView)
         addSubview(titleLabel)
         addSubview(authorLabel)
         addSubview(stateLabel)
         addSubview(introduceLabel)
+        addSubview(chapterLabel)
+        addSubview(chooseButton)
         
         coverView.snp.makeConstraints { (make) in
             make.left.top.equalToSuperview().offset(16)
@@ -76,12 +90,28 @@ class NovelInfoView: UIView {
             make.bottom.lessThanOrEqualTo(coverView)
         }
         
+        chapterLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(coverView)
+            make.centerY.equalTo(chooseButton)
+        }
+        
+        chooseButton.snp.makeConstraints { (make) in
+            make.right.bottom.equalToSuperview()
+        }
+        
         ThemeManager.shared.register(object: self) { [weak self] (theme) in
             guard let self = self else { return }
             self.titleLabel.textColor = theme.textColor
             self.authorLabel.textColor = theme.textColor
             self.stateLabel.textColor = theme.textColor
             self.introduceLabel.textColor = theme.textColor
+            chapterLabel.textColor = theme.textColor
+            chooseButton.setTitleColor(theme.textColor, for: .normal)
+            chooseButton.setTitleColor(theme.textColor.withAlphaComponent(0.6), for: .highlighted)
         }
+    }
+    
+    @objc private func chooseButtonClicked() {
+        chooseChapterPageAction?()
     }
 }

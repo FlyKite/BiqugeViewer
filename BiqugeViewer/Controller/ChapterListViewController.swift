@@ -20,6 +20,7 @@ class ChapterListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private let navigationBar: NovelNavigationBar = NovelNavigationBar()
     private let infoView: NovelInfoView = NovelInfoView()
     private let tableView: UITableView = UITableView()
     private let loadingView: LoadingFooterView = LoadingFooterView(frame: CGRect(x: 0, y: 0, width: 0, height: 56))
@@ -49,12 +50,18 @@ class ChapterListViewController: UIViewController {
                 self.page = page
                 self.loadingView.state = .stopped(tips: "加载完毕")
                 self.novelInfo = info
+                self.navigationBar.title = info.title
+                self.infoView.isHidden = false
                 self.infoView.updateInfo(title: info.title,
                                          author: info.author,
                                          state: info.state,
                                          introduce: info.introduce,
                                          coverUrl: info.coverUrl)
-                self.novelChapters.append(contentsOf: info.chapters)
+                if nextPage {
+                    self.novelChapters.append(contentsOf: info.chapters)
+                } else {
+                    self.novelChapters = info.chapters
+                }
             case let .failure(error):
                 self.loadingView.state = .stopped(tips: "加载失败，点击重试")
                 print(error)
@@ -111,7 +118,19 @@ extension ChapterListViewController: UITableViewDelegate {
 
 extension ChapterListViewController {
     private func setupViews() {
-        infoView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 148)
+        infoView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 168)
+        
+        infoView.isHidden = true
+        infoView.chooseChapterPageAction = { [weak self] in
+            guard let self = self, let pageNames = self.novelInfo?.pageNameList else { return }
+            let controller = ChapterPageViewController(pageNames: pageNames) { (index) in
+                self.page = index
+                self.novelChapters = []
+                self.tableView.reloadData()
+                self.loadData(nextPage: false)
+            }
+            self.present(controller, animated: true, completion: nil)
+        }
         
         tableView.register(NovelChapterCell.self, forCellReuseIdentifier: "cell")
         tableView.dataSource = self
@@ -123,10 +142,16 @@ extension ChapterListViewController {
         
         loadingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(retryLoadData)))
         
+        view.addSubview(navigationBar)
         view.addSubview(tableView)
         
+        navigationBar.snp.makeConstraints { (make) in
+            make.top.left.right.equalToSuperview()
+        }
+        
         tableView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
+            make.top.equalTo(navigationBar.snp.bottom)
+            make.left.right.bottom.equalToSuperview()
         }
         
         ThemeManager.shared.register(object: self) { [weak self] (theme) in
