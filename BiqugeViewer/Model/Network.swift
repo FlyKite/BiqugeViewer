@@ -24,7 +24,7 @@ class Network {
     
     static let host: String = "https://m.biquge.com.cn"
     
-    static func getNovelChapterList(novelId: String, page: Int, completion: ((Result<[NovelChapter], Error>) -> Void)?) {
+    static func getNovelChapterList(novelId: String, page: Int, completion: ((Result<NovelInfo, Error>) -> Void)?) {
         var url = host.appending("/book/\(novelId)/")
         if page > 1 {
             url.append("index_\(page).html")
@@ -33,9 +33,9 @@ class Network {
             switch response.result {
             case let .success(html):
                 DispatchQueue.global().async {
-                    let result: Result<[NovelChapter], Error>
+                    let result: Result<NovelInfo, Error>
                     do {
-                        let novelChapters = try NovelChapter.handle(from: html)
+                        let novelChapters = try NovelInfo.handle(from: html)
                         result = .success(novelChapters)
                     } catch {
                         result = .failure(error)

@@ -13,6 +13,7 @@
 		A600189B26303D7E004CA630 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A600189A26303D7E004CA630 /* NavigationController.swift */; };
 		A600189F26303E03004CA630 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A600189E26303E03004CA630 /* ThemeManager.swift */; };
 		A60018A2263040C5004CA630 /* LoadingFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60018A1263040C5004CA630 /* LoadingFooterView.swift */; };
+		A60803FB26326AD9005D91FB /* NovelInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60803FA26326AD9005D91FB /* NovelInfoView.swift */; };
 		A614AD2F262EF8A900AB9725 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = A614AD2E262EF8A900AB9725 /* Network.swift */; };
 		A6661AA0262EF68900311FDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6661A9F262EF68900311FDD /* AppDelegate.swift */; };
 		A6661AA4262EF68900311FDD /* NovelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6661AA3262EF68900311FDD /* NovelViewController.swift */; };
@@ -37,6 +38,7 @@
 		A600189A26303D7E004CA630 /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		A600189E26303E03004CA630 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		A60018A1263040C5004CA630 /* LoadingFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingFooterView.swift; sourceTree = "<group>"; };
+		A60803FA26326AD9005D91FB /* NovelInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelInfoView.swift; sourceTree = "<group>"; };
 		A614AD2E262EF8A900AB9725 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		A6661A9C262EF68800311FDD /* BiqugeViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BiqugeViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6661A9F262EF68900311FDD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 		A6661ABC262EF7F100311FDD /* View */ = {
 			isa = PBXGroup;
 			children = (
+				A60803FA26326AD9005D91FB /* NovelInfoView.swift */,
 				A6DCD5CF26312C3B00C7A9F3 /* NovelNavigationBar.swift */,
 				A6DCD5CA2631205E00C7A9F3 /* NovelSettingView.swift */,
 				A6D5C9A8262FFC9B004BC7C1 /* NovelChapterCell.swift */,
@@ -171,6 +174,7 @@
 			buildPhases = (
 				0ABCDFD39414F265B3213507 /* [CP] Check Pods Manifest.lock */,
 				A6661A98262EF68800311FDD /* Sources */,
+				A60803FF26326C58005D91FB /* Update Build Number */,
 				A6661A99262EF68800311FDD /* Frameworks */,
 				A6661A9A262EF68800311FDD /* Resources */,
 				6025D403A77C383DED0907C9 /* [CP] Embed Pods Frameworks */,
@@ -269,6 +273,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BiqugeViewer/Pods-BiqugeViewer-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		A60803FF26326C58005D91FB /* Update Build Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Update Build Number";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "version=`/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" $PRODUCT_SETTINGS_PATH`\nversion=`expr $version + 1`\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $version\" $PRODUCT_SETTINGS_PATH\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $version\" $PRODUCT_SETTINGS_PATH\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -291,6 +313,7 @@
 				A6DCD5D026312C3B00C7A9F3 /* NovelNavigationBar.swift in Sources */,
 				A6DCD5CB2631205E00C7A9F3 /* NovelSettingView.swift in Sources */,
 				A614AD2F262EF8A900AB9725 /* Network.swift in Sources */,
+				A60803FB26326AD9005D91FB /* NovelInfoView.swift in Sources */,
 				A6D5C9AD262FFD20004BC7C1 /* Color.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -440,6 +463,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 123;
 				DEVELOPMENT_TEAM = 77M64ZZJGP;
 				INFOPLIST_FILE = BiqugeViewer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -462,6 +486,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 123;
 				DEVELOPMENT_TEAM = 77M64ZZJGP;
 				INFOPLIST_FILE = BiqugeViewer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

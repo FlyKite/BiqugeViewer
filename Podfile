@@ -9,4 +9,5 @@ target 'BiqugeViewer' do
   pod 'Alamofire'
   pod 'SwiftSoup'
   pod 'SnapKit'
+  pod 'Kingfisher'
 end

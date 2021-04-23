@@ -20,10 +20,12 @@ class ChapterListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private let infoView: NovelInfoView = NovelInfoView()
     private let tableView: UITableView = UITableView()
     private let loadingView: LoadingFooterView = LoadingFooterView(frame: CGRect(x: 0, y: 0, width: 0, height: 56))
     
     private var page: Int = 1
+    private var novelInfo: NovelInfo?
     private var novelChapters: [NovelChapter] = []
 
     override func viewDidLoad() {
@@ -43,15 +45,28 @@ class ChapterListViewController: UIViewController {
         loadingView.state = .loading
         Network.getNovelChapterList(novelId: novelId, page: page) { (result) in
             switch result {
-            case let .success(chapters):
+            case let .success(info):
                 self.page = page
                 self.loadingView.state = .stopped(tips: "加载完毕")
-                self.novelChapters.append(contentsOf: chapters)
+                self.novelInfo = info
+                self.infoView.updateInfo(title: info.title,
+                                         author: info.author,
+                                         state: info.state,
+                                         introduce: info.introduce,
+                                         coverUrl: info.coverUrl)
+                self.novelChapters.append(contentsOf: info.chapters)
             case let .failure(error):
                 self.loadingView.state = .stopped(tips: "加载失败，点击重试")
                 print(error)
             }
             self.tableView.reloadData()
+        }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if tableView.tableHeaderView == nil {
+            tableView.tableHeaderView = infoView
         }
     }
     
@@ -96,6 +111,8 @@ extension ChapterListViewController: UITableViewDelegate {
 
 extension ChapterListViewController {
     private func setupViews() {
+        infoView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 148)
+        
         tableView.register(NovelChapterCell.self, forCellReuseIdentifier: "cell")
         tableView.dataSource = self
         tableView.delegate = self

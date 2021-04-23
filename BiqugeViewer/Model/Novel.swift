@@ -8,12 +8,82 @@
 import Foundation
 import SwiftSoup
 
+struct NovelInfo {
+    let title: String
+    let author: String
+    let state: String
+    let introduce: String
+    let coverUrl: String
+    let pageNameList: [String]
+    
+    let chapters: [NovelChapter]
+    
+    static func handle(from html: String) throws -> NovelInfo {
+        let doc = try SwiftSoup.parse(html)
+        let title = try getTitle(document: doc)
+        let (author, state) = try getAuthorAndState(document: doc)
+        let introduce = try getIntroduce(document: doc)
+        let cover = try getCoverUrl(document: doc)
+        let pages = try getPageList(document: doc)
+        let chapters = try NovelChapter.handle(from: doc)
+        return NovelInfo(title: title,
+                         author: author,
+                         state: state,
+                         introduce: introduce,
+                         coverUrl: cover,
+                         pageNameList: pages,
+                         chapters: chapters)
+    }
+    
+    private static func getTitle(document: Document) throws -> String {
+        return try document.getElementById("bqgmb_h1")?.text() ?? ""
+    }
+    
+    private static func getAuthorAndState(document: Document) throws -> (String, String) {
+        let elements = try document.select("div.block_txt2").select("p")
+        var author = ""
+        var state = ""
+        for element in elements {
+            let text = try element.text()
+            if text.hasPrefix("作者：") {
+                author = text.replacingOccurrences(of: "作者：", with: "")
+            } else if text.hasPrefix("状态：") {
+                state = text.replacingOccurrences(of: "状态：", with: "")
+            }
+        }
+        return (author, state)
+    }
+    
+    private static func getIntroduce(document: Document) throws -> String {
+        return try document.select("div.intro_info").first()?.text() ?? ""
+    }
+    
+    private static func getCoverUrl(document: Document) throws -> String {
+        return try document.select("div.block_img2").select("img").first()?.attr("src") ?? ""
+    }
+    
+    private static func getPageList(document: Document) throws -> [String] {
+        guard let options = try document.select("div.listpage").select("span.middle").select("select").first()?.select("option") else {
+            return []
+        }
+        var results: [String] = []
+        for option in options {
+            results.append(try option.text())
+        }
+        return results
+    }
+}
+
 struct NovelChapter {
     let title: String
     let link: String
     
     static func handle(from html: String) throws -> [NovelChapter] {
         let doc = try SwiftSoup.parse(html)
+        return try handle(from: doc)
+    }
+    
+    static func handle(from doc: Document) throws -> [NovelChapter] {
         guard let list = try doc.select("ul.chapter").last() else {
             throw NSError(domain: "Chapter list not found", code: -999, userInfo: nil)
         }
