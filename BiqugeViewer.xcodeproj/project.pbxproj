@@ -16,6 +16,12 @@
 		A60803FB26326AD9005D91FB /* NovelInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60803FA26326AD9005D91FB /* NovelInfoView.swift */; };
 		A60804082632A601005D91FB /* ChapterPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60804072632A601005D91FB /* ChapterPageViewController.swift */; };
 		A608040B2632A645005D91FB /* PresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A608040A2632A645005D91FB /* PresentationAnimator.swift */; };
+		A608040E2632ADB9005D91FB /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A608040D2632ADB9005D91FB /* HomeViewController.swift */; };
+		A60804112632AF5D005D91FB /* HomeTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60804102632AF5D005D91FB /* HomeTabBar.swift */; };
+		A60804492632C143005D91FB /* BookrackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60804482632C143005D91FB /* BookrackViewController.swift */; };
+		A61200BB2632CE8E000A351A /* NovelItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61200BA2632CE8E000A351A /* NovelItemCell.swift */; };
+		A61200BE2632D218000A351A /* RecommendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61200BD2632D218000A351A /* RecommendViewController.swift */; };
+		A61200C12632D22C000A351A /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61200C02632D22C000A351A /* SearchViewController.swift */; };
 		A614AD2F262EF8A900AB9725 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = A614AD2E262EF8A900AB9725 /* Network.swift */; };
 		A6661AA0262EF68900311FDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6661A9F262EF68900311FDD /* AppDelegate.swift */; };
 		A6661AA4262EF68900311FDD /* NovelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6661AA3262EF68900311FDD /* NovelViewController.swift */; };
@@ -43,6 +49,12 @@
 		A60803FA26326AD9005D91FB /* NovelInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelInfoView.swift; sourceTree = "<group>"; };
 		A60804072632A601005D91FB /* ChapterPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterPageViewController.swift; sourceTree = "<group>"; };
 		A608040A2632A645005D91FB /* PresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationAnimator.swift; sourceTree = "<group>"; };
+		A608040D2632ADB9005D91FB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		A60804102632AF5D005D91FB /* HomeTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabBar.swift; sourceTree = "<group>"; };
+		A60804482632C143005D91FB /* BookrackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookrackViewController.swift; sourceTree = "<group>"; };
+		A61200BA2632CE8E000A351A /* NovelItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelItemCell.swift; sourceTree = "<group>"; };
+		A61200BD2632D218000A351A /* RecommendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendViewController.swift; sourceTree = "<group>"; };
+		A61200C02632D22C000A351A /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		A614AD2E262EF8A900AB9725 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		A6661A9C262EF68800311FDD /* BiqugeViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BiqugeViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6661A9F262EF68900311FDD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -129,6 +141,10 @@
 			isa = PBXGroup;
 			children = (
 				A600189A26303D7E004CA630 /* NavigationController.swift */,
+				A608040D2632ADB9005D91FB /* HomeViewController.swift */,
+				A60804482632C143005D91FB /* BookrackViewController.swift */,
+				A61200BD2632D218000A351A /* RecommendViewController.swift */,
+				A61200C02632D22C000A351A /* SearchViewController.swift */,
 				A6D5C9A1262FEB2F004BC7C1 /* ChapterListViewController.swift */,
 				A60804072632A601005D91FB /* ChapterPageViewController.swift */,
 				A6661AA3262EF68900311FDD /* NovelViewController.swift */,
@@ -151,6 +167,8 @@
 		A6661ABC262EF7F100311FDD /* View */ = {
 			isa = PBXGroup;
 			children = (
+				A60804102632AF5D005D91FB /* HomeTabBar.swift */,
+				A61200BA2632CE8E000A351A /* NovelItemCell.swift */,
 				A60803FA26326AD9005D91FB /* NovelInfoView.swift */,
 				A6DCD5CF26312C3B00C7A9F3 /* NovelNavigationBar.swift */,
 				A6DCD5CA2631205E00C7A9F3 /* NovelSettingView.swift */,
@@ -304,9 +322,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A60804492632C143005D91FB /* BookrackViewController.swift in Sources */,
 				A6661AA4262EF68900311FDD /* NovelViewController.swift in Sources */,
 				A600189B26303D7E004CA630 /* NavigationController.swift in Sources */,
 				A600189826302D96004CA630 /* DefaultsProperty.swift in Sources */,
+				A61200BB2632CE8E000A351A /* NovelItemCell.swift in Sources */,
 				A6661AA0262EF68900311FDD /* AppDelegate.swift in Sources */,
 				A6D5C9A2262FEB2F004BC7C1 /* ChapterListViewController.swift in Sources */,
 				A6D5C997262F00C1004BC7C1 /* NovelCell.swift in Sources */,
@@ -317,10 +337,14 @@
 				A60804082632A601005D91FB /* ChapterPageViewController.swift in Sources */,
 				A6D5C9A9262FFC9B004BC7C1 /* NovelChapterCell.swift in Sources */,
 				A6D5C990262EF8F4004BC7C1 /* Novel.swift in Sources */,
+				A61200C12632D22C000A351A /* SearchViewController.swift in Sources */,
 				A6001895263021A5004CA630 /* Theme.swift in Sources */,
 				A6DCD5D026312C3B00C7A9F3 /* NovelNavigationBar.swift in Sources */,
+				A61200BE2632D218000A351A /* RecommendViewController.swift in Sources */,
+				A608040E2632ADB9005D91FB /* HomeViewController.swift in Sources */,
 				A6DCD5CB2631205E00C7A9F3 /* NovelSettingView.swift in Sources */,
 				A614AD2F262EF8A900AB9725 /* Network.swift in Sources */,
+				A60804112632AF5D005D91FB /* HomeTabBar.swift in Sources */,
 				A60803FB26326AD9005D91FB /* NovelInfoView.swift in Sources */,
 				A6D5C9AD262FFD20004BC7C1 /* Color.swift in Sources */,
 			);

@@ -36,8 +36,6 @@ class ChapterPageViewController: UIViewController {
             dismiss(animated: true, completion: nil)
         }
     }
-    
-    
 }
 
 extension ChapterPageViewController: UITableViewDataSource {

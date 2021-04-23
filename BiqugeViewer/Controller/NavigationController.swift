@@ -13,11 +13,11 @@ class NavigationController: UINavigationController {
         super.viewDidLoad()
         navigationBar.isHidden = true
         
-        var viewControllers: [UIViewController] = []
-//        if let novelId = NovelManager.lastViewNovelId {
-            let controller = ChapterListViewController(novelId: "32883")
+        var viewControllers: [UIViewController] = [HomeViewController()]
+        if let novelId = NovelManager.lastViewNovelId {
+            let controller = ChapterListViewController(novelId: novelId)
             viewControllers.append(controller)
-//        }
+        }
         if let link = NovelManager.lastViewNovelLink {
             let controller = NovelViewController(link: link)
             viewControllers.append(controller)
