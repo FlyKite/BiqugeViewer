@@ -39,7 +39,7 @@ struct YellowTheme: Theme {
     let backgroundColor: UIColor = 0xE8DCBF.rgbColor
     let navigationBackgroundColor: UIColor = 0xE0D4B7.rgbColor
     let textColor: UIColor = 0x412A0E.rgbColor
-    let detailTextColor: UIColor = 0x9E9E9E.rgbColor
+    let detailTextColor: UIColor = 0xA09587.rgbColor
     let sliderTintColor: UIColor = 0xFFECB3.rgbColor
     let statusBarStyle: UIStatusBarStyle = {
         if #available(iOS 13, *) {
@@ -56,7 +56,7 @@ struct GreenTheme: Theme {
     let backgroundColor: UIColor = 0xBBDBBB.rgbColor
     let navigationBackgroundColor: UIColor = 0xB3D3B3.rgbColor
     let textColor: UIColor = 0x172017.rgbColor
-    let detailTextColor: UIColor = 0x9E9E9E.rgbColor
+    let detailTextColor: UIColor = 0x8B908B.rgbColor
     let sliderTintColor: UIColor = 0x66BB6A.rgbColor
     let statusBarStyle: UIStatusBarStyle = {
         if #available(iOS 13, *) {
@@ -73,7 +73,7 @@ struct PinkTheme: Theme {
     let backgroundColor: UIColor = 0xE4CDCA.rgbColor
     let navigationBackgroundColor: UIColor = 0xDCC5C2.rgbColor
     let textColor: UIColor = 0x2F2121.rgbColor
-    let detailTextColor: UIColor = 0x9E9E9E.rgbColor
+    let detailTextColor: UIColor = 0x979090.rgbColor
     let sliderTintColor: UIColor = 0xEF9A9A.rgbColor
     let statusBarStyle: UIStatusBarStyle = {
         if #available(iOS 13, *) {
@@ -90,7 +90,7 @@ struct DarkTheme: Theme {
     let backgroundColor: UIColor = 0x3B4147.rgbColor
     let navigationBackgroundColor: UIColor = 0x33393F.rgbColor
     let textColor: UIColor = 0x8794A3.rgbColor
-    let detailTextColor: UIColor = 0x9E9E9E.rgbColor
+    let detailTextColor: UIColor = 0x6C7682.rgbColor
     let sliderTintColor: UIColor = 0x607D8B.rgbColor
     let statusBarStyle: UIStatusBarStyle = .lightContent
     

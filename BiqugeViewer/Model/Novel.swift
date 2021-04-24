@@ -85,6 +85,85 @@ struct HomeRecommend {
     }
 }
 
+struct SearchNovelInfo {
+    let id: String
+    let coverUrl: String
+    let title: String
+    let author: String
+    let category: String
+    let introduce: String
+    let latestChapterTitle: String
+    let latestChapterTime: String
+    
+    static func handle(from html: String) throws -> ([SearchNovelInfo], Bool) {
+        let doc = try SwiftSoup.parse(html)
+        let items = try doc.select("div.result-item")
+        var results: [SearchNovelInfo] = []
+        for item in items {
+            results.append(try handle(item: item))
+        }
+        let isEnd = try getIsEnd(document: doc)
+        return (results, isEnd)
+    }
+    
+    private static func handle(item: Element) throws -> SearchNovelInfo {
+        var id: String = ""
+        var title: String = ""
+        if let titleElement = try item.select("a.result-game-item-title-link").first() {
+            title = try titleElement.text()
+            id = try titleElement.attr("href").replacingOccurrences(of: "book", with: "").replacingOccurrences(of: "/", with: "")
+        }
+        let coverUrl = try item.select("img.result-game-item-pic-link-img").first()?.attr("src") ?? ""
+        let introduce = try item.select("p.result-game-item-desc").first()?.text() ?? ""
+        var author: String = ""
+        var category: String = ""
+        var latestChapterTitle: String = ""
+        var latestChapterTime: String = ""
+        if let div = try item.select("div.result-game-item-info").first() {
+            func getText(element: Element) throws -> String {
+                guard element.children().count >= 2 else { return "" }
+                return try element.child(1).text()
+            }
+            let children = div.children()
+            if children.count > 1 {
+                author = try getText(element: children[0])
+            }
+            if children.count > 2 {
+                category = try getText(element: children[1])
+            }
+            if children.count > 3 {
+                latestChapterTime = try getText(element: children[2])
+            }
+            if children.count > 4 {
+                latestChapterTitle = try getText(element: children[3])
+            }
+        }
+        return SearchNovelInfo(id: id,
+                               coverUrl: coverUrl,
+                               title: title,
+                               author: author,
+                               category: category,
+                               introduce: introduce,
+                               latestChapterTitle: latestChapterTitle,
+                               latestChapterTime: latestChapterTime)
+    }
+    
+    private static func getIsEnd(document: Document) throws -> Bool {
+        guard let node = try document.select("div.search-result-page-main").first()?.getChildNodes().last as? TextNode else {
+            return true
+        }
+        let text = node.text()
+        let regx = try NSRegularExpression(pattern: "当前第(.+)页.+总共(.+)页", options: .caseInsensitive)
+        let matches = regx.matches(in: text, options: .reportCompletion, range: NSRange(location: 0, length: text.count))
+        if let match = matches.first, match.numberOfRanges == 3 {
+            guard let range1 = Range<String.Index>(match.range(at: 1), in: text),
+                  let range2 = Range<String.Index>(match.range(at: 2), in: text) else { return true }
+            return String(text[range1]) == String(text[range2])
+        }
+        return true
+    }
+}
+
 struct NovelInfo {
     let id: String
     let title: String

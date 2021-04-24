@@ -26,6 +26,7 @@ class NovelManager {
         let id: String
         let title: String
         let author: String
+        let coverUrl: String
     }
     
     static let shared: NovelManager = NovelManager()
@@ -69,7 +70,10 @@ class NovelManager {
                 var novels: [BookrackNovelInfo] = []
                 for record in records {
                     guard let id = record.id else { continue }
-                    novels.append(BookrackNovelInfo(id: id, title: record.title ?? "", author: record.author ?? ""))
+                    novels.append(BookrackNovelInfo(id: id,
+                                                    title: record.title ?? "",
+                                                    author: record.author ?? "",
+                                                    coverUrl: record.coverUrl ?? ""))
                 }
                 result = .success(novels)
             } catch {
@@ -121,6 +125,7 @@ class NovelManager {
                     entity.id = novelInfo.id
                     entity.title = novelInfo.title
                     entity.author = novelInfo.author
+                    entity.coverUrl = novelInfo.coverUrl
                     updateAction(entity)
                     try context.save()
                 } else {

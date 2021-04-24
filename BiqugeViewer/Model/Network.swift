@@ -9,18 +9,6 @@ import Foundation
 import Alamofire
 
 class Network {
-    static func getPage(completion: ((Result<String, Error>) -> Void)?) {
-        let url = "https://m.biquge.com.cn/book/32883/196858.html"
-        let task = AF.request(url).responseString { (response) in
-            switch response.result {
-            case let .success(html):
-                completion?(.success(html))
-            case let .failure(error):
-                completion?(.failure(error))
-            }
-        }
-        task.resume()
-    }
     
     static let host: String = "https://m.biquge.com.cn"
     
@@ -84,6 +72,30 @@ class Network {
                     do {
                         let novel = try Novel.handle(from: html, link: path)
                         result = .success(novel)
+                    } catch {
+                        result = .failure(error)
+                    }
+                    DispatchQueue.main.async {
+                        completion?(result)
+                    }
+                }
+            case let .failure(error):
+                completion?(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
+    static func searchBooks(keyword: String, page: Int = 1, completion: ((Result<([SearchNovelInfo], Bool), Error>) -> Void)?) {
+        let url = host.appending("/search.php")
+        let task = AF.request(url, parameters: ["q": keyword, "p": page]).responseString { (response) in
+            switch response.result {
+            case let .success(html):
+                DispatchQueue.global().async {
+                    let result: Result<([SearchNovelInfo], Bool), Error>
+                    do {
+                        let novels = try SearchNovelInfo.handle(from: html)
+                        result = .success(novels)
                     } catch {
                         result = .failure(error)
                     }

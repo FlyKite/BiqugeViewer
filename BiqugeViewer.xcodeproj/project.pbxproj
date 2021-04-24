@@ -40,6 +40,7 @@
 		A6DCD5C8263117FD00C7A9F3 /* NovelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DCD5C7263117FD00C7A9F3 /* NovelManager.swift */; };
 		A6DCD5CB2631205E00C7A9F3 /* NovelSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DCD5CA2631205E00C7A9F3 /* NovelSettingView.swift */; };
 		A6DCD5D026312C3B00C7A9F3 /* NovelNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DCD5CF26312C3B00C7A9F3 /* NovelNavigationBar.swift */; };
+		A6FA117C2634195E00675D5C /* SearchNovelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6FA117B2634195E00675D5C /* SearchNovelCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +80,7 @@
 		A6DCD5C7263117FD00C7A9F3 /* NovelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelManager.swift; sourceTree = "<group>"; };
 		A6DCD5CA2631205E00C7A9F3 /* NovelSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelSettingView.swift; sourceTree = "<group>"; };
 		A6DCD5CF26312C3B00C7A9F3 /* NovelNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelNavigationBar.swift; sourceTree = "<group>"; };
+		A6FA117B2634195E00675D5C /* SearchNovelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchNovelCell.swift; sourceTree = "<group>"; };
 		BFA0FACA4A1476FAF4F018BC /* Pods-BiqugeViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BiqugeViewer.release.xcconfig"; path = "Target Support Files/Pods-BiqugeViewer/Pods-BiqugeViewer.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -179,6 +181,7 @@
 				A60804102632AF5D005D91FB /* HomeTabBar.swift */,
 				A61200BA2632CE8E000A351A /* NovelItemCell.swift */,
 				A61200C62632F1FD000A351A /* HomeRecommendCell.swift */,
+				A6FA117B2634195E00675D5C /* SearchNovelCell.swift */,
 				A60803FA26326AD9005D91FB /* NovelInfoView.swift */,
 				A6DCD5CF26312C3B00C7A9F3 /* NovelNavigationBar.swift */,
 				A6DCD5CA2631205E00C7A9F3 /* NovelSettingView.swift */,
@@ -348,6 +351,7 @@
 				A69599CF2633FAD90092ED55 /* DBUtil.swift in Sources */,
 				A608040B2632A645005D91FB /* PresentationAnimator.swift in Sources */,
 				A600189F26303E03004CA630 /* ThemeManager.swift in Sources */,
+				A6FA117C2634195E00675D5C /* SearchNovelCell.swift in Sources */,
 				A6DCD5C8263117FD00C7A9F3 /* NovelManager.swift in Sources */,
 				A60804082632A601005D91FB /* ChapterPageViewController.swift in Sources */,
 				A6D5C9A9262FFC9B004BC7C1 /* NovelChapterCell.swift in Sources */,
