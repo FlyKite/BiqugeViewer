@@ -68,6 +68,7 @@ class NovelInfoView: UIView {
         stack.axis = .vertical
         stack.alignment = .fill
         
+        lastReadChapterView.isHidden = true
         lastReadChapterView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(lastReadChapterViewClicked)))
         
         addSubview(coverView)
