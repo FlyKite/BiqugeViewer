@@ -35,7 +35,7 @@ class NovelItemCell: UICollectionViewCell {
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 2
         
-        authorLabel.font = UIFont.systemFont(ofSize: 12)
+        authorLabel.font = UIFont.systemFont(ofSize: 10)
         authorLabel.textAlignment = .center
         
         contentView.addSubview(coverView)
@@ -50,14 +50,12 @@ class NovelItemCell: UICollectionViewCell {
         
         titleLabel.snp.makeConstraints { (make) in
             make.top.equalTo(coverView.snp.bottom).offset(4)
-            make.left.equalToSuperview().offset(8)
-            make.right.equalToSuperview().offset(-8)
+            make.left.right.equalToSuperview()
         }
         
         authorLabel.snp.makeConstraints { (make) in
             make.top.equalTo(titleLabel.snp.bottom).offset(2)
-            make.left.equalToSuperview().offset(8)
-            make.right.equalToSuperview().offset(-8)
+            make.left.right.equalToSuperview()
         }
         
         ThemeManager.shared.register(object: self) { [weak self] (theme) in

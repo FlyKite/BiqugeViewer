@@ -86,6 +86,7 @@ struct HomeRecommend {
 }
 
 struct NovelInfo {
+    let id: String
     let title: String
     let author: String
     let state: String
@@ -95,7 +96,7 @@ struct NovelInfo {
     
     let chapters: [NovelChapter]
     
-    static func handle(from html: String) throws -> NovelInfo {
+    static func handle(from html: String, novelId: String) throws -> NovelInfo {
         let doc = try SwiftSoup.parse(html)
         let title = try getTitle(document: doc)
         let (author, state) = try getAuthorAndState(document: doc)
@@ -103,7 +104,8 @@ struct NovelInfo {
         let cover = try getCoverUrl(document: doc)
         let pages = try getPageList(document: doc)
         let chapters = try NovelChapter.handle(from: doc)
-        return NovelInfo(title: title,
+        return NovelInfo(id: novelId,
+                         title: title,
                          author: author,
                          state: state,
                          introduce: introduce,

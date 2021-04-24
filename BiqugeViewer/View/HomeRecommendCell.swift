@@ -63,13 +63,13 @@ class HomeRecommendCell: UITableViewCell {
         
         titleLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         novelTitleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-        authorLabel.font = UIFont.systemFont(ofSize: 14)
+        authorLabel.font = UIFont.systemFont(ofSize: 12)
         introduceLabel.font = UIFont.systemFont(ofSize: 14)
         introduceLabel.numberOfLines = 0
         
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 92, height: 170)
-        layout.minimumLineSpacing = 12
+        layout.minimumLineSpacing = 16
         layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
         novelCollectionView.register(NovelItemCell.self)
@@ -97,7 +97,7 @@ class HomeRecommendCell: UITableViewCell {
         }
         
         mainNovelContainer.snp.makeConstraints { (make) in
-            make.top.equalTo(titleContainer.snp.bottom).offset(12)
+            make.top.equalTo(titleContainer.snp.bottom).offset(16)
             make.left.equalToSuperview().offset(16)
             make.right.equalToSuperview().offset(-16)
         }
@@ -126,7 +126,7 @@ class HomeRecommendCell: UITableViewCell {
         }
         
         novelCollectionView.snp.makeConstraints { (make) in
-            make.top.equalTo(mainNovelContainer.snp.bottom).offset(12)
+            make.top.equalTo(mainNovelContainer.snp.bottom).offset(16)
             make.left.right.equalToSuperview()
             make.height.equalTo(170)
         }
@@ -138,7 +138,7 @@ class HomeRecommendCell: UITableViewCell {
             self.novelCollectionView.backgroundColor = theme.backgroundColor
             self.titleLabel.textColor = theme.textColor
             self.novelTitleLabel.textColor = theme.textColor
-            self.authorLabel.textColor = theme.textColor
+            self.authorLabel.textColor = theme.detailTextColor
             self.introduceLabel.textColor = theme.textColor
         }
     }

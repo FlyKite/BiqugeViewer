@@ -58,7 +58,7 @@ class Network {
                 DispatchQueue.global().async {
                     let result: Result<NovelInfo, Error>
                     do {
-                        let novelChapters = try NovelInfo.handle(from: html)
+                        let novelChapters = try NovelInfo.handle(from: html, novelId: novelId)
                         result = .success(novelChapters)
                     } catch {
                         result = .failure(error)

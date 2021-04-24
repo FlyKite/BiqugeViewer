@@ -176,7 +176,8 @@ extension NovelViewController {
         
         loadingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(retryLoadData)))
         
-        navigationBar.onBackClick = { [weak self] in
+        navigationBar.showLikeButton = false
+        navigationBar.onBackClick = { [weak self] (bar) in
             guard let self = self else { return }
             self.navigationController?.popViewController(animated: true)
         }

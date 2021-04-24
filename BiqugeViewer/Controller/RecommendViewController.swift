@@ -59,7 +59,7 @@ extension RecommendViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
-        tableView.rowHeight = 370
+        tableView.rowHeight = 374
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 16))
         
         view.addSubview(tableView)

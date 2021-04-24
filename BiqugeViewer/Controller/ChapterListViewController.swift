@@ -34,6 +34,15 @@ class ChapterListViewController: UIViewController {
         NovelManager.lastViewNovelId = novelId
         setupViews()
         loadData(nextPage: false)
+        NovelManager.shared.queryNovelLikeAndLastRead(novelId: novelId) { (result) in
+            switch result {
+            case let .success(info):
+                guard let info = info else { return }
+                self.navigationBar.isLiked = info.isLiked
+            case let .failure(error):
+                print(error)
+            }
+        }
     }
     
     deinit {
@@ -84,6 +93,17 @@ class ChapterListViewController: UIViewController {
     @objc private func retryLoadData() {
         loadData(nextPage: !novelChapters.isEmpty)
     }
+    
+    private func likeButtonClicked() {
+        guard let novelInfo = novelInfo else { return }
+        NovelManager.shared.setNovelLiked(novel: novelInfo, isLiked: !navigationBar.isLiked) { (error) in
+            if let error = error {
+                print(error)
+            } else {
+                self.navigationBar.isLiked.toggle()
+            }
+        }
+    }
 }
 
 extension ChapterListViewController: UITableViewDataSource {
@@ -118,13 +138,22 @@ extension ChapterListViewController: UITableViewDelegate {
 
 extension ChapterListViewController {
     private func setupViews() {
-        infoView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 168)
+        navigationBar.onBackClick = { [weak self] (bar) in
+            guard let self = self else { return }
+            self.navigationController?.popViewController(animated: true)
+        }
         
+        navigationBar.onLikeClick = { [weak self] (bar) in
+            guard let self = self else { return }
+            self.likeButtonClicked()
+        }
+        
+        infoView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 168)
         infoView.isHidden = true
         infoView.chooseChapterPageAction = { [weak self] in
             guard let self = self, let pageNames = self.novelInfo?.pageNameList else { return }
             let controller = ChapterPageViewController(pageNames: pageNames) { (index) in
-                self.page = index
+                self.page = index + 1
                 self.novelChapters = []
                 self.tableView.reloadData()
                 self.loadData(nextPage: false)
@@ -142,8 +171,8 @@ extension ChapterListViewController {
         
         loadingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(retryLoadData)))
         
-        view.addSubview(navigationBar)
         view.addSubview(tableView)
+        view.addSubview(navigationBar)
         
         navigationBar.snp.makeConstraints { (make) in
             make.top.left.right.equalToSuperview()
