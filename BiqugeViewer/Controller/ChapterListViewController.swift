@@ -90,6 +90,11 @@ class ChapterListViewController: UIViewController {
                 } else {
                     self.novelChapters = info.chapters
                 }
+                NovelManager.shared.insertNovel(novel: info) { (error) in
+                    if let error = error {
+                        print(error)
+                    }
+                }
             case let .failure(error):
                 self.loadingView.state = .stopped(tips: "加载失败，点击重试")
                 print(error)
