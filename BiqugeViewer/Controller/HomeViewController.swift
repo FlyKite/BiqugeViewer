@@ -22,7 +22,7 @@ class HomeViewController: UIViewController {
 extension HomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let index = Int((scrollView.contentOffset.x / scrollView.bounds.width).rounded())
-        if index != tabBar.selectedIndex {
+        if (scrollView.isDragging || scrollView.isDecelerating) && index != tabBar.selectedIndex {
             tabBar.setSelectedIndex(index)
         }
     }
