@@ -1,3 +1,7 @@
+<p align="center">
+<img src="https://github.com/FlyKite/BiqugeViewer/blob/main/BiqugeViewer/Assets.xcassets/AppIcon.appiconset/AppIcon_180.png?raw=true" alt="AppIcon"/>
+</p>
+
 # 笔趣阅读
 这是一个小说阅读器，简简单单没有太多花里胡哨的东西  
 内容来源：[笔趣阁](https://m.biquge.com.cn)
