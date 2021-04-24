@@ -16,3 +16,11 @@
 - 设置行间距
 - 自动记录最后阅读的章节
 - 打开APP自动进入上次阅读的章节
+
+## 应用截图
+![snapshot1](https://github.com/FlyKite/BiqugeViewer/blob/main/snapshots/snapshot_1.PNG?raw=true)
+![snapshot2](https://github.com/FlyKite/BiqugeViewer/blob/main/snapshots/snapshot_2.PNG?raw=true)
+![snapshot3](https://github.com/FlyKite/BiqugeViewer/blob/main/snapshots/snapshot_3.PNG?raw=true)
+![snapshot4](https://github.com/FlyKite/BiqugeViewer/blob/main/snapshots/snapshot_4.PNG?raw=true)
+![snapshot5](https://github.com/FlyKite/BiqugeViewer/blob/main/snapshots/snapshot_5.PNG?raw=true)
+![snapshot6](https://github.com/FlyKite/BiqugeViewer/blob/main/snapshots/snapshot_6.PNG?raw=true)
