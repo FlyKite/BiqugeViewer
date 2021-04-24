@@ -11,6 +11,14 @@ import Kingfisher
 class NovelInfoView: UIView {
     
     var chooseChapterPageAction: (() -> Void)?
+    var lastReadChapterClickAction: (() -> Void)?
+    
+    var lastReadChapterTitle: String? {
+        didSet {
+            lastReadChapterView.title = lastReadChapterTitle
+            lastReadChapterView.isHidden = lastReadChapterTitle?.isEmpty ?? true
+        }
+    }
     
     func updateInfo(title: String, author: String, state: String, introduce: String, coverUrl: String) {
         titleLabel.text = title
@@ -25,6 +33,7 @@ class NovelInfoView: UIView {
     private let authorLabel: UILabel = UILabel()
     private let stateLabel: UILabel = UILabel()
     private let introduceLabel: UILabel = UILabel()
+    private let lastReadChapterView: LastReadChapterView = LastReadChapterView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,6 +52,8 @@ class NovelInfoView: UIView {
         introduceLabel.font = UIFont.systemFont(ofSize: 14)
         introduceLabel.numberOfLines = 0
         
+        let headerView = UIView()
+        
         let chapterLabel = UILabel()
         chapterLabel.text = "章节列表"
         chapterLabel.font = UIFont.systemFont(ofSize: 15)
@@ -53,13 +64,22 @@ class NovelInfoView: UIView {
         chooseButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         chooseButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.alignment = .fill
+        
+        lastReadChapterView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(lastReadChapterViewClicked)))
+        
         addSubview(coverView)
         addSubview(titleLabel)
         addSubview(authorLabel)
         addSubview(stateLabel)
         addSubview(introduceLabel)
-        addSubview(chapterLabel)
-        addSubview(chooseButton)
+        addSubview(stack)
+        stack.addArrangedSubview(lastReadChapterView)
+        stack.addArrangedSubview(headerView)
+        headerView.addSubview(chapterLabel)
+        headerView.addSubview(chooseButton)
         
         coverView.snp.makeConstraints { (make) in
             make.left.top.equalToSuperview().offset(16)
@@ -90,13 +110,21 @@ class NovelInfoView: UIView {
             make.bottom.lessThanOrEqualTo(coverView)
         }
         
+        stack.snp.makeConstraints { (make) in
+            make.left.right.bottom.equalToSuperview()
+        }
+        
+        lastReadChapterView.snp.makeConstraints { (make) in
+            make.height.equalTo(56)
+        }
+        
         chapterLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(coverView)
-            make.centerY.equalTo(chooseButton)
+            make.left.equalToSuperview().offset(16)
+            make.centerY.equalToSuperview()
         }
         
         chooseButton.snp.makeConstraints { (make) in
-            make.right.bottom.equalToSuperview()
+            make.right.top.bottom.equalToSuperview()
         }
         
         ThemeManager.shared.register(object: self) { [weak self] (theme) in
@@ -113,5 +141,82 @@ class NovelInfoView: UIView {
     
     @objc private func chooseButtonClicked() {
         chooseChapterPageAction?()
+    }
+    
+    @objc private func lastReadChapterViewClicked() {
+        lastReadChapterClickAction?()
+    }
+}
+
+private class LastReadChapterView: UIView {
+    
+    var title: String? {
+        get { titleLabel.text }
+        set { titleLabel.text = newValue }
+    }
+    
+    private let titleLabel: UILabel = UILabel()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupViews()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupViews()
+    }
+    
+    private func setupViews() {
+        let label = UILabel()
+        label.text = "上次读到"
+        label.font = UIFont.systemFont(ofSize: 15)
+        
+        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        
+        let arrow = UIButton(type: .system)
+        arrow.setImage(#imageLiteral(resourceName: "arrow_right"), for: .normal)
+        arrow.isUserInteractionEnabled = false
+        arrow.tintColor = 0x9E9E9E.rgbColor
+        
+        addSubview(label)
+        addSubview(titleLabel)
+        addSubview(arrow)
+        
+        label.snp.makeConstraints { (make) in
+            make.right.equalTo(titleLabel.snp.left).offset(-8)
+            make.centerY.equalToSuperview()
+        }
+        
+        titleLabel.snp.makeConstraints { (make) in
+            make.right.equalTo(arrow.snp.left).offset(-8)
+            make.centerY.equalToSuperview()
+        }
+        
+        arrow.snp.makeConstraints { (make) in
+            make.right.equalToSuperview().offset(-12)
+            make.centerY.equalToSuperview()
+        }
+        
+        ThemeManager.shared.register(object: self) { [weak self] (theme) in
+            guard let self = self else { return }
+            self.titleLabel.textColor = theme.textColor
+            label.textColor = theme.textColor
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        backgroundColor = ThemeManager.shared.currentTheme.navigationBackgroundColor
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        backgroundColor = .clear
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        backgroundColor = .clear
     }
 }

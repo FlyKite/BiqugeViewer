@@ -35,6 +35,8 @@ class SearchNovelCell: UITableViewCell {
     }
     
     private func setupViews() {
+        selectedBackgroundView = UIView()
+        
         titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
         authorLabel.font = UIFont.systemFont(ofSize: 13)
         categoryLabel.font = UIFont.systemFont(ofSize: 10)
@@ -83,6 +85,7 @@ class SearchNovelCell: UITableViewCell {
             self.authorLabel.textColor = theme.detailTextColor
             self.categoryLabel.textColor = theme.detailTextColor
             self.introduceLabel.textColor = theme.textColor
+            self.selectedBackgroundView?.backgroundColor = theme.navigationBackgroundColor
         }
     }
 }

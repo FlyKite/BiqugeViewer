@@ -28,20 +28,39 @@ class ChapterListViewController: UIViewController {
     private var page: Int = 1
     private var novelInfo: NovelInfo?
     private var novelChapters: [NovelChapter] = []
+    
+    private var lastReadChapterTitle: String?
+    private var lastReadChapterLink: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         NovelManager.lastViewNovelId = novelId
         setupViews()
         loadData(nextPage: false)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         NovelManager.shared.queryNovelLikeAndLastRead(novelId: novelId) { (result) in
             switch result {
             case let .success(info):
                 guard let info = info else { return }
                 self.navigationBar.isLiked = info.isLiked
+                self.lastReadChapterTitle = info.lastReadTitle
+                self.lastReadChapterLink = info.lastReadLink
+                self.updateLastReadChapter()
             case let .failure(error):
                 print(error)
             }
+        }
+    }
+    
+    private func updateLastReadChapter() {
+        let hasLastReadChapter = lastReadChapterTitle != nil && lastReadChapterLink != nil
+        infoView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: hasLastReadChapter ? 206 : 168)
+        infoView.lastReadChapterTitle = lastReadChapterTitle
+        if tableView.tableHeaderView == infoView {
+            tableView.tableHeaderView = infoView
         }
     }
     
@@ -95,8 +114,7 @@ class ChapterListViewController: UIViewController {
     }
     
     private func likeButtonClicked() {
-        guard let novelInfo = novelInfo else { return }
-        NovelManager.shared.setNovelLiked(novel: novelInfo, isLiked: !navigationBar.isLiked) { (error) in
+        NovelManager.shared.setNovelLiked(novelId: novelId, isLiked: !navigationBar.isLiked) { (error) in
             if let error = error {
                 print(error)
             } else {
@@ -124,7 +142,7 @@ extension ChapterListViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.row < novelChapters.count {
             let chapter = novelChapters[indexPath.row]
-            let controller = NovelViewController(link: chapter.link)
+            let controller = NovelViewController(novelId: novelId, link: chapter.link)
             navigationController?.pushViewController(controller, animated: true)
         }
     }
@@ -159,6 +177,11 @@ extension ChapterListViewController {
                 self.loadData(nextPage: false)
             }
             self.present(controller, animated: true, completion: nil)
+        }
+        infoView.lastReadChapterClickAction = { [weak self] in
+            guard let self = self, let link = self.lastReadChapterLink else { return }
+            let controller = NovelViewController(novelId: self.novelId, link: link)
+            self.navigationController?.pushViewController(controller, animated: true)
         }
         
         tableView.register(NovelChapterCell.self)

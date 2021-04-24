@@ -10,9 +10,11 @@ import SnapKit
 
 class NovelViewController: UIViewController {
     
+    let novelId: String
     let link: String
     
-    init(link: String) {
+    init(novelId: String, link: String) {
+        self.novelId = novelId
         self.link = link
         super.init(nibName: nil, bundle: nil)
     }
@@ -146,7 +148,13 @@ extension NovelViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        NovelManager.lastViewNovelLink = novels[indexPath.row].link
+        let novel = novels[indexPath.row]
+        NovelManager.lastViewNovelLink = novel.link
+        NovelManager.shared.setNovelLastRead(novelId: novelId, title: novel.title, link: novel.link) { (error) in
+            if let error = error {
+                print(error)
+            }
+        }
         if indexPath.row == novels.count - 1 {
             loadData()
         }

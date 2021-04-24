@@ -39,20 +39,54 @@ class NovelManager {
         return "https://www.biquge.com.cn/files/article/image/\(String(novelId[..<endIndex]))/\(novelId)/\(novelId)s.jpg"
     }
     
-    func setNovelLiked(novel: NovelInfo, isLiked: Bool, completion: ((Error?) -> Void)?) {
-        updateNovel(novel) { (entity) in
+    func setNovelLiked(novelId: String, isLiked: Bool, completion: ((Error?) -> Void)?) {
+        updateNovel(novelId) { (entity) in
             entity.isLiked = isLiked
         } completion: { (error) in
             completion?(error)
         }
     }
     
-    func setNovelLastRead(title: String, link: String, novel: NovelInfo, completion: ((Error?) -> Void)?) {
-        updateNovel(novel) { (entity) in
+    func setNovelLastRead(novelId: String, title: String, link: String, completion: ((Error?) -> Void)?) {
+        updateNovel(novelId) { (entity) in
             entity.lastReadTitle = title
             entity.lastReadLink = link
         } completion: { (error) in
             completion?(error)
+        }
+    }
+    
+    func insertNovel(novel: NovelInfo, completion: ((Error?) -> Void)?) {
+        guard let context = DBUtil.context else {
+            completion?(NSError(domain: "Can not create context", code: -999, userInfo: nil))
+            return
+        }
+        queue.async {
+            var err: Error?
+            do {
+                if let entity = try self.queryNovelEntity(id: novel.id, in: context) {
+                    entity.id = novel.id
+                    entity.title = novel.title
+                    entity.author = novel.author
+                    entity.coverUrl = novel.coverUrl
+                    if context.hasChanges {
+                        try context.save()
+                    }
+                } else if let entity = NovelEntity.insertNewObject(into: context) {
+                    entity.id = novel.id
+                    entity.title = novel.title
+                    entity.author = novel.author
+                    entity.coverUrl = novel.coverUrl
+                    try context.save()
+                } else {
+                    err = NSError(domain: "Unknown error", code: -999, userInfo: nil)
+                }
+            } catch {
+                err = error
+            }
+            DispatchQueue.main.async {
+                completion?(err)
+            }
         }
     }
     
@@ -120,7 +154,9 @@ class NovelManager {
             do {
                 if let entity = try self.queryNovelEntity(id: novelInfo.id, in: context) {
                     updateAction(entity)
-                    try context.save()
+                    if context.hasChanges {
+                        try context.save()
+                    }
                 } else if let entity = NovelEntity.insertNewObject(into: context) {
                     entity.id = novelInfo.id
                     entity.title = novelInfo.title
@@ -130,6 +166,30 @@ class NovelManager {
                     try context.save()
                 } else {
                     err = NSError(domain: "Unknown error", code: -999, userInfo: nil)
+                }
+            } catch {
+                err = error
+            }
+            DispatchQueue.main.async {
+                completion?(err)
+            }
+        }
+    }
+    
+    private func updateNovel(_ novelId: String, updateAction: @escaping (NovelEntity) -> Void, completion: ((Error?) -> Void)?) {
+        guard let context = DBUtil.context else {
+            completion?(NSError(domain: "Can not create context", code: -999, userInfo: nil))
+            return
+        }
+        queue.async {
+            var err: Error?
+            do {
+                guard let entity = try self.queryNovelEntity(id: novelId, in: context) else {
+                    throw NSError(domain: "Entity not found", code: -999, userInfo: ["novelId": novelId])
+                }
+                updateAction(entity)
+                if context.hasChanges {
+                    try context.save()
                 }
             } catch {
                 err = error

@@ -17,10 +17,11 @@ class NavigationController: UINavigationController {
         if let novelId = NovelManager.lastViewNovelId {
             let controller = ChapterListViewController(novelId: novelId)
             viewControllers.append(controller)
-        }
-        if let link = NovelManager.lastViewNovelLink {
-            let controller = NovelViewController(link: link)
-            viewControllers.append(controller)
+            
+            if let link = NovelManager.lastViewNovelLink {
+                let controller = NovelViewController(novelId: novelId, link: link)
+                viewControllers.append(controller)
+            }
         }
         setViewControllers(viewControllers, animated: false)
         
