@@ -38,8 +38,8 @@ class NovelInfoView: UIView {
     
     private func setupViews() {
         titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-        authorLabel.font = UIFont.systemFont(ofSize: 14)
-        stateLabel.font = UIFont.systemFont(ofSize: 12)
+        authorLabel.font = UIFont.systemFont(ofSize: 13)
+        stateLabel.font = UIFont.systemFont(ofSize: 10)
         introduceLabel.font = UIFont.systemFont(ofSize: 14)
         introduceLabel.numberOfLines = 0
         
@@ -102,8 +102,8 @@ class NovelInfoView: UIView {
         ThemeManager.shared.register(object: self) { [weak self] (theme) in
             guard let self = self else { return }
             self.titleLabel.textColor = theme.textColor
-            self.authorLabel.textColor = theme.textColor
-            self.stateLabel.textColor = theme.textColor
+            self.authorLabel.textColor = theme.detailTextColor
+            self.stateLabel.textColor = theme.detailTextColor
             self.introduceLabel.textColor = theme.textColor
             chapterLabel.textColor = theme.textColor
             chooseButton.setTitleColor(theme.textColor, for: .normal)

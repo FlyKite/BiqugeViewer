@@ -16,13 +16,7 @@ class HomeRecommendCell: UITableViewCell {
         novelCollection = recommend.novels
         mainNovel = recommend.mainNovel
         if let novel = recommend.mainNovel {
-            if novel.id.count > 3 {
-                let endIndex = novel.id.index(novel.id.startIndex, offsetBy: novel.id.count - 3)
-                let url = "https://www.biquge.com.cn/files/article/image/\(String(novel.id[..<endIndex]))/\(novel.id)/\(novel.id)s.jpg"
-                coverView.kf.setImage(with: URL(string: url))
-            } else {
-                coverView.image = nil
-            }
+            coverView.kf.setImage(with: URL(string: NovelManager.novelCoverUrl(novelId: novel.id)))
             novelTitleLabel.text = novel.title
             authorLabel.text = novel.author
             introduceLabel.text = novel.introduce
@@ -157,11 +151,7 @@ extension HomeRecommendCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(NovelItemCell.self, for: indexPath)
         let novel = novelCollection[indexPath.item]
-        var coverUrl: String = ""
-        if novel.id.count > 3 {
-            let endIndex = novel.id.index(novel.id.startIndex, offsetBy: novel.id.count - 3)
-            coverUrl = "https://www.biquge.com.cn/files/article/image/\(String(novel.id[..<endIndex]))/\(novel.id)/\(novel.id)s.jpg"
-        }
+        let coverUrl = NovelManager.novelCoverUrl(novelId: novel.id)
         cell.update(title: novel.title, author: novel.author, coverUrl: coverUrl)
         return cell
     }

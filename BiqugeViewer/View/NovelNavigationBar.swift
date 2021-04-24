@@ -64,6 +64,7 @@ class NovelNavigationBar: UIView {
         backButton.addTarget(self, action: #selector(backButtonClicked), for: .touchUpInside)
         
         titleLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         
         likeButton.setImage(#imageLiteral(resourceName: "like_normal"), for: .normal)
         likeButton.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
@@ -87,6 +88,8 @@ class NovelNavigationBar: UIView {
         
         titleLabel.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
+            make.left.greaterThanOrEqualTo(backButton.snp.right)
+            make.right.lessThanOrEqualTo(likeButton)
         }
         
         likeButton.snp.makeConstraints { (make) in

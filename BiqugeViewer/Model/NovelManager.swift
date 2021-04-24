@@ -32,6 +32,12 @@ class NovelManager {
     
     private let queue: DispatchQueue = DispatchQueue(label: "com.flykite.BiqugeViewer.NovelManager", attributes: .concurrent)
     
+    static func novelCoverUrl(novelId: String) -> String {
+        guard novelId.count > 3 else { return "" }
+        let endIndex = novelId.index(novelId.startIndex, offsetBy: novelId.count - 3)
+        return "https://www.biquge.com.cn/files/article/image/\(String(novelId[..<endIndex]))/\(novelId)/\(novelId)s.jpg"
+    }
+    
     func setNovelLiked(novel: NovelInfo, isLiked: Bool, completion: ((Error?) -> Void)?) {
         updateNovel(novel) { (entity) in
             entity.isLiked = isLiked
