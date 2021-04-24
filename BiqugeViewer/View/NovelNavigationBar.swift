@@ -146,6 +146,6 @@ class NovelNavigationBar: UIView {
         scale.timingFunction = CAMediaTimingFunction(name: .easeOut)
         scale.isRemovedOnCompletion = false
         scale.fillMode = .both
-        backButton.layer.add(scale, forKey: "scale")
+        view.layer.add(scale, forKey: "scale")
     }
 }
