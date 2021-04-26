@@ -5,7 +5,7 @@
 # 笔趣阅读
 这是一个小说阅读器，简简单单没有太多花里胡哨的东西  
 内容来源：[笔趣阁](https://m.biquge.com.cn)
-现已上架[App Store](https://apps.apple.com/cn/app/%E7%AC%94%E8%B6%A3%E6%82%A6%E8%AF%BB/id1564573368）
+现已上架[App Store](https://apps.apple.com/cn/app/%E7%AC%94%E8%B6%A3%E6%82%A6%E8%AF%BB/id1564573368)
 
 ## 现有功能
 - 我的书架
