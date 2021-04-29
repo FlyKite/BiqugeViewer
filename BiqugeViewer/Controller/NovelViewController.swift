@@ -46,7 +46,9 @@ class NovelViewController: UIViewController {
         guard !loadingView.isLoading else { return }
         guard let link = novels.isEmpty ? self.link : novels.last?.nextChapterLink else { return }
         loadingView.state = .loading
-        Network.getNovelPage(path: link) { (result) in
+        Network.request(BiqugeApi.novelContent(path: link)) { html in
+            return try Novel.handle(from: html, link: link)
+        } completion: { result in
             switch result {
             case let .success(novel):
                 if self.navigationBar.title == nil {

@@ -71,12 +71,15 @@ class ChapterListViewController: UIViewController {
     
     private func loadData(nextPage: Bool) {
         guard !loadingView.isLoading else { return }
+        let novelId = novelId
         let page = self.page + (nextPage ? 1 : 0)
         if let pageCount = novelInfo?.pageNameList.count, page > pageCount {
             return
         }
         loadingView.state = .loading
-        Network.getNovelChapterList(novelId: novelId, page: page) { (result) in
+        Network.request(BiqugeApi.chapterList(novelId: novelId, page: page)) { html in
+            return try NovelInfo.handle(from: html, novelId: novelId)
+        } completion: { result in
             switch result {
             case let .success(info):
                 self.page = page

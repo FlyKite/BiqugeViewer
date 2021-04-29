@@ -8,103 +8,81 @@
 import Foundation
 import Alamofire
 
+protocol Api: URLRequestConvertible {
+    static var host: String { get }
+    var path: String { get }
+    var parameters: Parameters? { get }
+}
+
+enum BiqugeApi: Api {
+    case homeRecommend
+    case chapterList(novelId: String, page: Int)
+    case novelContent(path: String)
+    case searchBooks(keyword: String, page: Int)
+    
+    static var host: String { "https://m.biquge.com.cn" }
+    
+    var path: String {
+        switch self {
+        case .homeRecommend:
+            return "/"
+        case let .chapterList(novelId, page):
+            return "/book/\(novelId)/".appending(page > 1 ? "index_\(page).html" : "")
+        case let .novelContent(path):
+            return path
+        case .searchBooks:
+            return "/search.php"
+        }
+    }
+    
+    var parameters: Parameters? {
+        switch self {
+        case .homeRecommend,
+             .chapterList,
+             .novelContent:
+            return nil
+        case let .searchBooks(keyword, page):
+            return ["q": keyword, "p": page]
+        }
+    }
+}
+
+extension BiqugeApi {
+    func asURLRequest() throws -> URLRequest {
+        let host = type(of: self).host
+        let path = self.path
+        guard let url = URL(string: "\(host)\(path)") else {
+            throw NSError(domain: "Could not convert to URL",
+                          code: -999,
+                          userInfo: ["host": host, "path": path])
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.get.rawValue
+        request = try URLEncoding().encode(request, with: parameters)
+        return request
+    }
+}
+
 class Network {
-    
-    static let host: String = "https://m.biquge.com.cn"
-    
-    static func getHomeRecommend(completion: ((Result<[HomeRecommend], Error>) -> Void)?) {
-        let task = AF.request(host).responseString { (response) in
+    static func request<T>(_ api: BiqugeApi,
+                           htmlHandler: @escaping (String) throws -> T,
+                           completion: @escaping (Result<T, Error>) -> Void) {
+        let task = AF.request(api).responseString { (response) in
             switch response.result {
             case let .success(html):
                 DispatchQueue.global().async {
-                    let result: Result<[HomeRecommend], Error>
+                    let result: Result<T, Error>
                     do {
-                        let novelChapters = try HomeRecommend.handle(from: html)
-                        result = .success(novelChapters)
+                        result = .success(try htmlHandler(html))
                     } catch {
                         result = .failure(error)
                     }
                     DispatchQueue.main.async {
-                        completion?(result)
+                        completion(result)
                     }
                 }
             case let .failure(error):
-                completion?(.failure(error))
-            }
-        }
-        task.resume()
-    }
-    
-    static func getNovelChapterList(novelId: String, page: Int, completion: ((Result<NovelInfo, Error>) -> Void)?) {
-        var url = host.appending("/book/\(novelId)/")
-        if page > 1 {
-            url.append("index_\(page).html")
-        }
-        let task = AF.request(url).responseString { (response) in
-            switch response.result {
-            case let .success(html):
-                DispatchQueue.global().async {
-                    let result: Result<NovelInfo, Error>
-                    do {
-                        let novelChapters = try NovelInfo.handle(from: html, novelId: novelId)
-                        result = .success(novelChapters)
-                    } catch {
-                        result = .failure(error)
-                    }
-                    DispatchQueue.main.async {
-                        completion?(result)
-                    }
-                }
-            case let .failure(error):
-                completion?(.failure(error))
-            }
-        }
-        task.resume()
-    }
-    
-    static func getNovelPage(path: String, completion: ((Result<Novel, Error>) -> Void)?) {
-        let url = host.appending(path)
-        let task = AF.request(url).responseString { (response) in
-            switch response.result {
-            case let .success(html):
-                DispatchQueue.global().async {
-                    let result: Result<Novel, Error>
-                    do {
-                        let novel = try Novel.handle(from: html, link: path)
-                        result = .success(novel)
-                    } catch {
-                        result = .failure(error)
-                    }
-                    DispatchQueue.main.async {
-                        completion?(result)
-                    }
-                }
-            case let .failure(error):
-                completion?(.failure(error))
-            }
-        }
-        task.resume()
-    }
-    
-    static func searchBooks(keyword: String, page: Int = 1, completion: ((Result<([SearchNovelInfo], Bool), Error>) -> Void)?) {
-        let url = host.appending("/search.php")
-        let task = AF.request(url, parameters: ["q": keyword, "p": page]).responseString { (response) in
-            switch response.result {
-            case let .success(html):
-                DispatchQueue.global().async {
-                    let result: Result<([SearchNovelInfo], Bool), Error>
-                    do {
-                        let novels = try SearchNovelInfo.handle(from: html)
-                        result = .success(novels)
-                    } catch {
-                        result = .failure(error)
-                    }
-                    DispatchQueue.main.async {
-                        completion?(result)
-                    }
-                }
-            case let .failure(error):
-                completion?(.failure(error))
+                completion(.failure(error))
             }
         }
         task.resume()

@@ -20,7 +20,9 @@ class RecommendViewController: UIViewController {
     }
     
     private func loadData() {
-        Network.getHomeRecommend { (result) in
+        Network.request(BiqugeApi.homeRecommend) { html in
+            return try HomeRecommend.handle(from: html)
+        } completion: { result in
             switch result {
             case let .success(recommends):
                 self.recommends = recommends
