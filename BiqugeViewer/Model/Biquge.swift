@@ -121,7 +121,7 @@ struct BiqugeNovelInfoHandler: HtmlHandler {
         let introduce = try getIntroduce(document: doc)
         let cover = try getCoverUrl(document: doc)
         let pages = try getPageList(document: doc)
-        let chapters = try BiqugeNovelChapterHandler().handle(from: doc)
+        let chapters = try getChapters(document: doc)
         var id: String = ""
         if case let BiqugeApi.chapterList(novelId, _) = api {
             id = novelId
@@ -173,18 +173,9 @@ struct BiqugeNovelInfoHandler: HtmlHandler {
         }
         return results
     }
-}
-
-struct BiqugeNovelChapterHandler: HtmlHandler {
-    typealias Content = [NovelChapter]
     
-    func handle(html: String, api: Api) throws -> [NovelChapter] {
-        let doc = try SwiftSoup.parse(html)
-        return try handle(from: doc)
-    }
-    
-    func handle(from doc: Document) throws -> [NovelChapter] {
-        guard let list = try doc.select("ul.chapter").last() else {
+    private func getChapters(document: Document) throws -> [NovelChapter] {
+        guard let list = try document.select("ul.chapter").last() else {
             throw NSError(domain: "Chapter list not found", code: -999, userInfo: nil)
         }
         var result: [NovelChapter] = []

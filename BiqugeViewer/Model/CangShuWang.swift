@@ -10,13 +10,16 @@ import Alamofire
 import SwiftSoup
 
 /// 99藏书网
-enum CangShuApi {
+enum CangShuApi: Api {
+    case bookChapters(bookId: String)
     case searchBooks(keyword: String, page: Int)
     
     static var host: String { "https://www.99csw.com" }
     
     var path: String {
         switch self {
+        case let .bookChapters(bookId):
+            return "/book/\(bookId)/index.htm"
         case .searchBooks:
             return "/book/search.php"
         }
@@ -24,6 +27,8 @@ enum CangShuApi {
     
     var parameters: Parameters? {
         switch self {
+        case .bookChapters:
+            return nil
         case let .searchBooks(keyword, page):
             return ["type": "all", "keyword": keyword, "page": page]
         }
@@ -77,5 +82,60 @@ struct CangShuHandler: HtmlHandler {
             return true
         }
         return try node.select("a.next").last() != nil
+    }
+}
+
+struct CangShuNovelInfoHandler: HtmlHandler {
+    
+    typealias Content = NovelInfo
+    
+    func handle(html: String, api: Api) throws -> NovelInfo {
+        let doc = try SwiftSoup.parse(html)
+        let title = try getTitle(document: doc)
+        let author = try getAuthor(document: doc)
+        let introduce = try getIntroduce(document: doc)
+        let cover = try getCoverUrl(document: doc)
+        let chapters = try getChapters(document: doc)
+        var id: String = ""
+        if case let CangShuApi.bookChapters(bookId) = api {
+            id = bookId
+        }
+        return NovelInfo(id: id,
+                         title: title,
+                         author: author,
+                         state: "",
+                         introduce: introduce,
+                         coverUrl: cover,
+                         pageNameList: [],
+                         chapters: chapters)
+    }
+    
+    private func getTitle(document: Document) throws -> String {
+        return try document.getElementById("book_info")?.select("h2").first()?.text() ?? ""
+    }
+    
+    private func getAuthor(document: Document) throws -> String {
+        return try document.getElementById("book_info")?.select("h4").first()?.select("a").first()?.text() ?? ""
+    }
+    
+    private func getIntroduce(document: Document) throws -> String {
+        return try document.select("div.intro").first()?.text() ?? ""
+    }
+    
+    private func getCoverUrl(document: Document) throws -> String {
+        return try document.getElementById("book_info")?.select("img").first()?.attr("src") ?? ""
+    }
+    
+    private func getChapters(document: Document) throws -> [NovelChapter] {
+        guard let list = try document.select("ul.chapter").last() else {
+            throw NSError(domain: "Chapter list not found", code: -999, userInfo: nil)
+        }
+        var result: [NovelChapter] = []
+        for child in list.children() {
+            guard child.tagName() == "li" else { continue }
+            guard let link = try? child.getElementsByTag("a").first() else { continue }
+            result.append(NovelChapter(title: try link.text(), link: try link.attr("href")))
+        }
+        return result
     }
 }
