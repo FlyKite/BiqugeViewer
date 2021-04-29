@@ -77,9 +77,7 @@ class ChapterListViewController: UIViewController {
             return
         }
         loadingView.state = .loading
-        Network.request(BiqugeApi.chapterList(novelId: novelId, page: page)) { html in
-            return try NovelInfo.handle(from: html, novelId: novelId)
-        } completion: { result in
+        Network.request(BiqugeApi.chapterList(novelId: novelId, page: page), handler: BiqugeNovelInfoHandler()) { result in
             switch result {
             case let .success(info):
                 self.page = page

@@ -40,6 +40,8 @@
 		A6DCD5C8263117FD00C7A9F3 /* NovelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DCD5C7263117FD00C7A9F3 /* NovelManager.swift */; };
 		A6DCD5CB2631205E00C7A9F3 /* NovelSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DCD5CA2631205E00C7A9F3 /* NovelSettingView.swift */; };
 		A6DCD5D026312C3B00C7A9F3 /* NovelNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DCD5CF26312C3B00C7A9F3 /* NovelNavigationBar.swift */; };
+		A6EF349E263AD2E100A1BC01 /* Biquge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6EF349D263AD2E100A1BC01 /* Biquge.swift */; };
+		A6EF34A0263AD30900A1BC01 /* CangShuWang.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6EF349F263AD30900A1BC01 /* CangShuWang.swift */; };
 		A6FA117C2634195E00675D5C /* SearchNovelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6FA117B2634195E00675D5C /* SearchNovelCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -80,6 +82,8 @@
 		A6DCD5C7263117FD00C7A9F3 /* NovelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelManager.swift; sourceTree = "<group>"; };
 		A6DCD5CA2631205E00C7A9F3 /* NovelSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelSettingView.swift; sourceTree = "<group>"; };
 		A6DCD5CF26312C3B00C7A9F3 /* NovelNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelNavigationBar.swift; sourceTree = "<group>"; };
+		A6EF349D263AD2E100A1BC01 /* Biquge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biquge.swift; sourceTree = "<group>"; };
+		A6EF349F263AD30900A1BC01 /* CangShuWang.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CangShuWang.swift; sourceTree = "<group>"; };
 		A6FA117B2634195E00675D5C /* SearchNovelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchNovelCell.swift; sourceTree = "<group>"; };
 		BFA0FACA4A1476FAF4F018BC /* Pods-BiqugeViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BiqugeViewer.release.xcconfig"; path = "Target Support Files/Pods-BiqugeViewer/Pods-BiqugeViewer.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -166,6 +170,8 @@
 			isa = PBXGroup;
 			children = (
 				A614AD2E262EF8A900AB9725 /* Network.swift */,
+				A6EF349D263AD2E100A1BC01 /* Biquge.swift */,
+				A6EF349F263AD30900A1BC01 /* CangShuWang.swift */,
 				A6D5C98F262EF8F4004BC7C1 /* Novel.swift */,
 				A6DCD5C7263117FD00C7A9F3 /* NovelManager.swift */,
 				A6001894263021A5004CA630 /* Theme.swift */,
@@ -339,6 +345,7 @@
 			files = (
 				A60804492632C143005D91FB /* BookrackViewController.swift in Sources */,
 				A6661AA4262EF68900311FDD /* NovelViewController.swift in Sources */,
+				A6EF34A0263AD30900A1BC01 /* CangShuWang.swift in Sources */,
 				A600189B26303D7E004CA630 /* NavigationController.swift in Sources */,
 				A69599C92633FA240092ED55 /* Model.xcdatamodeld in Sources */,
 				A600189826302D96004CA630 /* DefaultsProperty.swift in Sources */,
@@ -347,6 +354,7 @@
 				A6D5C9A2262FEB2F004BC7C1 /* ChapterListViewController.swift in Sources */,
 				A6D5C997262F00C1004BC7C1 /* NovelCell.swift in Sources */,
 				A60018A2263040C5004CA630 /* LoadingFooterView.swift in Sources */,
+				A6EF349E263AD2E100A1BC01 /* Biquge.swift in Sources */,
 				A61200C72632F1FD000A351A /* HomeRecommendCell.swift in Sources */,
 				A69599CF2633FAD90092ED55 /* DBUtil.swift in Sources */,
 				A608040B2632A645005D91FB /* PresentationAnimator.swift in Sources */,

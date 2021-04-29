@@ -40,9 +40,7 @@ class SearchViewController: UIViewController {
         guard !loadingView.isLoading || force else { return }
         let keyword = currentKeyword
         loadingView.state = .loading
-        Network.request(BiqugeApi.searchBooks(keyword: currentKeyword, page: page)) { html in
-            return try SearchNovelInfo.handle(from: html)
-        } completion: { [weak self] result in
+        Network.request(BiqugeApi.searchBooks(keyword: currentKeyword, page: page), handler: BiqugeSearchResultHandler()) { [weak self] result in
             guard let self = self, keyword == self.currentKeyword else { return }
             switch result {
             case let .success((novels, isEnd)):
