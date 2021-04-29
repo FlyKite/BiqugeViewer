@@ -279,7 +279,8 @@ struct Novel {
         guard let element = try document.select("td.next_chapter").select("a.jump-chapter-links").first() else {
             return nil
         }
-        return try element.attr("href")
+        let link = try element.attr("href")
+        return link.contains("dulaiduapp.com") ? nil : link
     }
     
     private static func getContent(document: Document) throws -> String {

@@ -29,6 +29,7 @@ class ChapterListViewController: UIViewController {
     private var novelInfo: NovelInfo?
     private var novelChapters: [NovelChapter] = []
     
+    private var isEnd: Bool = false
     private var lastReadChapterTitle: String?
     private var lastReadChapterLink: String?
 
@@ -71,6 +72,9 @@ class ChapterListViewController: UIViewController {
     private func loadData(nextPage: Bool) {
         guard !loadingView.isLoading else { return }
         let page = self.page + (nextPage ? 1 : 0)
+        if let pageCount = novelInfo?.pageNameList.count, page > pageCount {
+            return
+        }
         loadingView.state = .loading
         Network.getNovelChapterList(novelId: novelId, page: page) { (result) in
             switch result {

@@ -61,7 +61,13 @@ class SearchViewController: UIViewController {
     }
     
     @objc private func retryLoadData() {
+        guard !isEnd else { return }
         loadData(page: page + 1)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        view.endEditing(true)
     }
 }
 
@@ -178,6 +184,7 @@ extension SearchViewController {
         tableView.estimatedRowHeight = 148
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         tableView.tableFooterView = loadingView
+        tableView.keyboardDismissMode = .onDrag
         
         loadingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(retryLoadData)))
         

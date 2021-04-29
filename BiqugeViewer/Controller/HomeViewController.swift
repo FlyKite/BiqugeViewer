@@ -33,6 +33,7 @@ extension HomeViewController {
         container.showsHorizontalScrollIndicator = false
         container.contentInsetAdjustmentBehavior = .never
         container.isPagingEnabled = true
+        container.keyboardDismissMode = .onDrag
         container.delegate = self
         
         let bookrack = BookrackViewController()

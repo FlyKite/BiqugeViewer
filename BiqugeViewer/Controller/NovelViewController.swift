@@ -44,7 +44,7 @@ class NovelViewController: UIViewController {
     
     private func loadData() {
         guard !loadingView.isLoading else { return }
-        let link = novels.last?.nextChapterLink ?? self.link
+        guard let link = novels.isEmpty ? self.link : novels.last?.nextChapterLink else { return }
         loadingView.state = .loading
         Network.getNovelPage(path: link) { (result) in
             switch result {
