@@ -1,5 +1,5 @@
 //
-//  NovelItemCell.swift
+//  BookItemCell.swift
 //  BiqugeViewer
 //
 //  Created by FlyKite on 2021/4/23.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class NovelItemCell: UICollectionViewCell {
+class BookItemCell: UICollectionViewCell {
     
     func update(title: String, author: String, coverUrl: String) {
         titleLabel.text = title

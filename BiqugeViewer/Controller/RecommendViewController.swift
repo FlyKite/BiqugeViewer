@@ -40,9 +40,9 @@ extension RecommendViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(HomeRecommendCell.self, for: indexPath)
         cell.update(recommend: recommends[indexPath.row])
-        cell.novelClickAction = { [weak self] (novel) in
+        cell.bookClickAction = { [weak self] (book) in
             guard let self = self else { return }
-            let controller = ChapterListViewController(novelId: novel.id)
+            let controller = ChapterListViewController(bookId: book.id)
             self.navigationController?.pushViewController(controller, animated: true)
         }
         return cell

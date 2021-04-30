@@ -12,10 +12,16 @@ class DBUtil {
     
     static let context: NSManagedObjectContext? = getContext()
     
-    private static func getContext() -> NSManagedObjectContext? {
+    private static let documentsUrl: URL = {
         var url = URL(fileURLWithPath: NSHomeDirectory())
         url.appendPathComponent("Documents")
-        url.appendPathComponent("Novel.sqlite")
+        return url
+    }()
+    
+    private static func getContext() -> NSManagedObjectContext? {
+        renameToBook()
+        
+        let url = documentsUrl.appendingPathComponent("Book.sqlite")
         
         guard let modelUrl = Bundle.main.url(forResource: "Model", withExtension: "momd") else {
             return nil
@@ -36,6 +42,21 @@ class DBUtil {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
         return context
+    }
+    
+    private static func renameToBook() {
+        var url = documentsUrl.appendingPathComponent("Novel.sqlite")
+        if FileManager.default.fileExists(atPath: url.path) {
+            try? FileManager.default.moveItem(at: url, to: documentsUrl.appendingPathComponent("Book.sqlite"))
+        }
+        url = documentsUrl.appendingPathComponent("Novel.sqlite-shm")
+        if FileManager.default.fileExists(atPath: url.path) {
+            try? FileManager.default.moveItem(at: url, to: documentsUrl.appendingPathComponent("Book.sqlite-shm"))
+        }
+        url = documentsUrl.appendingPathComponent("Novel.sqlite-wal")
+        if FileManager.default.fileExists(atPath: url.path) {
+            try? FileManager.default.moveItem(at: url, to: documentsUrl.appendingPathComponent("Book.sqlite-wal"))
+        }
     }
 }
 

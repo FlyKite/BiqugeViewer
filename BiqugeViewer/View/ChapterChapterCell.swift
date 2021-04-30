@@ -1,5 +1,5 @@
 //
-//  NovelChapterCell.swift
+//  BookCahpterCell.swift
 //  BiqugeViewer
 //
 //  Created by FlyKite on 2021/4/21.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class NovelChapterCell: UITableViewCell {
+class BookCahpterCell: UITableViewCell {
     
     var name: String? {
         get { nameLabel.text }

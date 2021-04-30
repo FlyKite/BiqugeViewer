@@ -44,7 +44,7 @@ extension ChapterPageViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(NovelChapterCell.self, for: indexPath)
+        let cell = tableView.dequeueReusableCell(BookCahpterCell.self, for: indexPath)
         cell.name = pageNames[indexPath.row]
         return cell
     }
@@ -88,7 +88,7 @@ extension ChapterPageViewController {
         container.layer.shadowOpacity = 0.36
         container.layer.shadowOffset = CGSize(width: 0, height: -2)
         
-        tableView.register(NovelChapterCell.self)
+        tableView.register(BookCahpterCell.self)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 56

@@ -19,7 +19,7 @@ class SearchViewController: UIViewController {
     private var currentKeyword: String = ""
     private var page: Int = 0
     private var isEnd: Bool = false
-    private var searchNovels: [SearchNovelInfo] = []
+    private var books: [BookInfo] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +31,7 @@ class SearchViewController: UIViewController {
         tableView.isHidden = false
         page = 0
         currentKeyword = text
-        searchNovels = []
+        books = []
         tableView.reloadData()
         loadData(page: 1, force: true)
     }
@@ -43,13 +43,13 @@ class SearchViewController: UIViewController {
         Network.request(BiqugeApi.searchBooks(keyword: currentKeyword, page: page), handler: BiqugeSearchResultHandler()) { [weak self] result in
             guard let self = self, keyword == self.currentKeyword else { return }
             switch result {
-            case let .success((novels, isEnd)):
+            case let .success((books, isEnd)):
                 self.isEnd = isEnd
                 self.page = page
                 if page == 1 {
-                    self.searchNovels = novels
+                    self.books = books
                 } else {
-                    self.searchNovels.append(contentsOf: novels)
+                    self.books.append(contentsOf: books)
                 }
                 self.loadingView.state = .stopped(tips: "加载完毕")
             case let .failure(error):
@@ -73,17 +73,17 @@ class SearchViewController: UIViewController {
 
 extension SearchViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchNovels.count
+        return books.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(SearchNovelCell.self, for: indexPath)
-        let novel = searchNovels[indexPath.row]
-        cell.updateInfo(title: novel.title,
-                        author: novel.author,
-                        category: novel.category,
-                        introduce: novel.introduce,
-                        coverUrl: novel.coverUrl)
+        let cell = tableView.dequeueReusableCell(SearchResultCell.self, for: indexPath)
+        let book = books[indexPath.row]
+        cell.updateInfo(title: book.title,
+                        author: book.author,
+                        category: book.category,
+                        introduce: book.introduce,
+                        coverUrl: BiqugeApi.coverUrl(id: book.id))
         return cell
     }
 }
@@ -91,13 +91,13 @@ extension SearchViewController: UITableViewDataSource {
 extension SearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let novel = searchNovels[indexPath.row]
-        let controller = ChapterListViewController(novelId: novel.id)
+        let book = books[indexPath.row]
+        let controller = ChapterListViewController(bookId: book.id)
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == searchNovels.count - 1 && !isEnd {
+        if indexPath.row == books.count - 1 && !isEnd {
             loadData(page: page + 1)
         }
     }
@@ -177,7 +177,7 @@ extension SearchViewController {
         searchButton.addTarget(self, action: #selector(searchButtonClicked), for: .touchUpInside)
         
         tableView.isHidden = true
-        tableView.register(SearchNovelCell.self)
+        tableView.register(SearchResultCell.self)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 148

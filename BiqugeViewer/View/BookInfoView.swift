@@ -1,5 +1,5 @@
 //
-//  NovelInfoView.swift
+//  BookInfoView.swift
 //  BiqugeViewer
 //
 //  Created by FlyKite on 2021/4/23.
@@ -8,7 +8,7 @@
 import UIKit
 import Kingfisher
 
-class NovelInfoView: UIView {
+class BookInfoView: UIView {
     
     var chooseChapterPageAction: (() -> Void)?
     var lastReadChapterClickAction: (() -> Void)?
@@ -20,10 +20,10 @@ class NovelInfoView: UIView {
         }
     }
     
-    func updateInfo(title: String, author: String, state: String, introduce: String, coverUrl: String) {
+    func updateInfo(title: String, author: String, category: String, introduce: String, coverUrl: String) {
         titleLabel.text = title
         authorLabel.text = author
-        stateLabel.text = state
+        stateLabel.text = category
         introduceLabel.text = introduce
         coverView.kf.setImage(with: URL(string: coverUrl))
     }

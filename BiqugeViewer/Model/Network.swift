@@ -9,6 +9,15 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
+enum WebSourceType: String, CaseIterable {
+    case biquge
+    case cangshuwang
+}
+
+protocol WebSource: Api {
+    func bookCoverUrl(bookId: String) -> String
+}
+
 protocol Api: URLRequestConvertible {
     static var host: String { get }
     var path: String { get }
@@ -24,7 +33,7 @@ class Network {
     static func request<Handler: HtmlHandler>(_ api: Api,
                                               handler: Handler,
                                               completion: @escaping (Result<Handler.Content, Error>) -> Void) {
-        let task = AF.request(api).responseString { (response) in
+        let task = AF.request(api).responseString(encoding: .utf8) { (response) in
             switch response.result {
             case let .success(html):
                 DispatchQueue.global().async {

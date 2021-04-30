@@ -9,41 +9,41 @@ import UIKit
 
 class HomeRecommendCell: UITableViewCell {
     
-    var novelClickAction: ((HomeRecommend.RecommendNovel) -> Void)?
+    var bookClickAction: ((HomeRecommend.BookInfo) -> Void)?
     
     func update(recommend: HomeRecommend) {
         titleLabel.text = recommend.category
-        novelCollection = recommend.novels
-        mainNovel = recommend.mainNovel
-        if let novel = recommend.mainNovel {
-            coverView.kf.setImage(with: URL(string: NovelManager.novelCoverUrl(novelId: novel.id)))
-            novelTitleLabel.text = novel.title
-            authorLabel.text = novel.author
-            introduceLabel.text = novel.introduce
+        books = recommend.books
+        mainBook = recommend.mainBook
+        if let book = recommend.mainBook {
+            coverView.kf.setImage(with: URL(string: BiqugeApi.coverUrl(id: book.id)))
+            bookTitleLabel.text = book.title
+            authorLabel.text = book.author
+            introduceLabel.text = book.introduce
         }
-        novelCollectionView.reloadData()
+        bookCollectionView.reloadData()
     }
     
-    private var mainNovel: HomeRecommend.RecommendNovel?
-    private var novelCollection: [HomeRecommend.RecommendNovel] = []
+    private var mainBook: HomeRecommend.BookInfo?
+    private var books: [HomeRecommend.BookInfo] = []
     
     private let titleLabel: UILabel = UILabel()
-    private let mainNovelContainer: UIView = UIView()
+    private let mainBookContainer: UIView = UIView()
     private let coverView: UIImageView = UIImageView()
-    private let novelTitleLabel: UILabel = UILabel()
+    private let bookTitleLabel: UILabel = UILabel()
     private let authorLabel: UILabel = UILabel()
     private let introduceLabel: UILabel = UILabel()
     private let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-    private let novelCollectionView: UICollectionView
+    private let bookCollectionView: UICollectionView
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        novelCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        bookCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
     }
     
     required init?(coder: NSCoder) {
-        novelCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        bookCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         super.init(coder: coder)
         setupViews()
     }
@@ -51,12 +51,12 @@ class HomeRecommendCell: UITableViewCell {
     private func setupViews() {
         selectionStyle = .none
         
-        mainNovelContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(mainNovelClicked)))
+        mainBookContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(mainBookClicked)))
         
         let titleContainer = UIView()
         
         titleLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        novelTitleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        bookTitleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
         authorLabel.font = UIFont.systemFont(ofSize: 12)
         introduceLabel.font = UIFont.systemFont(ofSize: 14)
         introduceLabel.numberOfLines = 0
@@ -66,19 +66,19 @@ class HomeRecommendCell: UITableViewCell {
         layout.minimumLineSpacing = 16
         layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
-        novelCollectionView.register(NovelItemCell.self)
-        novelCollectionView.dataSource = self
-        novelCollectionView.delegate = self
-        novelCollectionView.showsHorizontalScrollIndicator = false
+        bookCollectionView.register(BookItemCell.self)
+        bookCollectionView.dataSource = self
+        bookCollectionView.delegate = self
+        bookCollectionView.showsHorizontalScrollIndicator = false
         
         contentView.addSubview(titleContainer)
         titleContainer.addSubview(titleLabel)
-        contentView.addSubview(mainNovelContainer)
-        mainNovelContainer.addSubview(coverView)
-        mainNovelContainer.addSubview(novelTitleLabel)
-        mainNovelContainer.addSubview(authorLabel)
-        mainNovelContainer.addSubview(introduceLabel)
-        contentView.addSubview(novelCollectionView)
+        contentView.addSubview(mainBookContainer)
+        mainBookContainer.addSubview(coverView)
+        mainBookContainer.addSubview(bookTitleLabel)
+        mainBookContainer.addSubview(authorLabel)
+        mainBookContainer.addSubview(introduceLabel)
+        contentView.addSubview(bookCollectionView)
         
         titleContainer.snp.makeConstraints { (make) in
             make.top.left.right.equalToSuperview()
@@ -90,7 +90,7 @@ class HomeRecommendCell: UITableViewCell {
             make.left.equalToSuperview().offset(16)
         }
         
-        mainNovelContainer.snp.makeConstraints { (make) in
+        mainBookContainer.snp.makeConstraints { (make) in
             make.top.equalTo(titleContainer.snp.bottom).offset(16)
             make.left.equalToSuperview().offset(16)
             make.right.equalToSuperview().offset(-16)
@@ -102,25 +102,25 @@ class HomeRecommendCell: UITableViewCell {
             make.height.equalTo(116)
         }
         
-        novelTitleLabel.snp.makeConstraints { (make) in
+        bookTitleLabel.snp.makeConstraints { (make) in
             make.top.equalToSuperview()
             make.left.equalTo(coverView.snp.right).offset(8)
             make.right.lessThanOrEqualToSuperview()
         }
         
         authorLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(novelTitleLabel)
-            make.top.equalTo(novelTitleLabel.snp.bottom).offset(2)
+            make.left.equalTo(bookTitleLabel)
+            make.top.equalTo(bookTitleLabel.snp.bottom).offset(2)
         }
         
         introduceLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(novelTitleLabel)
+            make.left.equalTo(bookTitleLabel)
             make.top.equalTo(authorLabel.snp.bottom).offset(8)
             make.right.bottom.lessThanOrEqualToSuperview()
         }
         
-        novelCollectionView.snp.makeConstraints { (make) in
-            make.top.equalTo(mainNovelContainer.snp.bottom).offset(16)
+        bookCollectionView.snp.makeConstraints { (make) in
+            make.top.equalTo(mainBookContainer.snp.bottom).offset(16)
             make.left.right.equalToSuperview()
             make.height.equalTo(170)
         }
@@ -129,30 +129,30 @@ class HomeRecommendCell: UITableViewCell {
             guard let self = self else { return }
             titleContainer.backgroundColor = theme.navigationBackgroundColor
             self.backgroundColor = theme.backgroundColor
-            self.novelCollectionView.backgroundColor = theme.backgroundColor
+            self.bookCollectionView.backgroundColor = theme.backgroundColor
             self.titleLabel.textColor = theme.textColor
-            self.novelTitleLabel.textColor = theme.textColor
+            self.bookTitleLabel.textColor = theme.textColor
             self.authorLabel.textColor = theme.detailTextColor
             self.introduceLabel.textColor = theme.textColor
         }
     }
     
-    @objc private func mainNovelClicked() {
-        guard let novel = mainNovel else { return }
-        novelClickAction?(novel)
+    @objc private func mainBookClicked() {
+        guard let book = mainBook else { return }
+        bookClickAction?(book)
     }
 }
 
 extension HomeRecommendCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return novelCollection.count
+        return books.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(NovelItemCell.self, for: indexPath)
-        let novel = novelCollection[indexPath.item]
-        let coverUrl = NovelManager.novelCoverUrl(novelId: novel.id)
-        cell.update(title: novel.title, author: novel.author, coverUrl: coverUrl)
+        let cell = collectionView.dequeueReusableCell(BookItemCell.self, for: indexPath)
+        let book = books[indexPath.item]
+        let coverUrl = BiqugeApi.coverUrl(id: book.id)
+        cell.update(title: book.title, author: book.author, coverUrl: coverUrl)
         return cell
     }
 }
@@ -160,6 +160,6 @@ extension HomeRecommendCell: UICollectionViewDataSource {
 extension HomeRecommendCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        novelClickAction?(novelCollection[indexPath.item])
+        bookClickAction?(books[indexPath.item])
     }
 }

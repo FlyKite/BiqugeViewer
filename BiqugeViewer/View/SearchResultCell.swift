@@ -1,5 +1,5 @@
 //
-//  SearchNovelCell.swift
+//  SearchResultCell.swift
 //  BiqugeViewer
 //
 //  Created by FlyKite on 2021/4/24.
@@ -8,14 +8,20 @@
 import UIKit
 import Kingfisher
 
-class SearchNovelCell: UITableViewCell {
+class SearchResultCell: UITableViewCell {
     
     func updateInfo(title: String, author: String, category: String, introduce: String, coverUrl: String) {
         titleLabel.text = title
         authorLabel.text = author
         categoryLabel.text = category
         introduceLabel.text = introduce
-        coverView.kf.setImage(with: URL(string: coverUrl))
+        if let url = URL(string: coverUrl), let scheme = url.scheme, !scheme.isEmpty {
+            coverView.kf.setImage(with: url)
+        } else if let url = URL(string: "https:\(coverUrl)") {
+            coverView.kf.setImage(with: url)
+        } else {
+            coverView.image = nil
+        }
     }
     
     private let coverView: UIImageView = UIImageView()

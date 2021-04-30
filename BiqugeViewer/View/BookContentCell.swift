@@ -1,5 +1,5 @@
 //
-//  NovelCell.swift
+//  BookContentCell.swift
 //  BiqugeViewer
 //
 //  Created by FlyKite on 2021/4/20.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class NovelCell: UITableViewCell {
+class BookContentCell: UITableViewCell {
     
     var onTap: ((UITapGestureRecognizer) -> Void)?
     
@@ -20,12 +20,12 @@ class NovelCell: UITableViewCell {
                 .foregroundColor: theme.textColor]
     }
     
-    static func size(for novel: Novel) -> CGSize {
-        let title = NSAttributedString(string: novel.title, attributes: [.font: UIFont.systemFont(ofSize: 28, weight: .medium)])
+    static func size(for chapter: BookChapter) -> CGSize {
+        let title = NSAttributedString(string: chapter.title, attributes: [.font: UIFont.systemFont(ofSize: 28, weight: .medium)])
         let titleHeight = title.boundingRect(with: CGSize(width: UIScreen.main.bounds.width - 24, height: .infinity),
                                              options: [.usesFontLeading, .usesLineFragmentOrigin],
                                              context: nil).size.height
-        let attrContent = NSAttributedString(string: novel.content, attributes: contentAttributes)
+        let attrContent = NSAttributedString(string: chapter.content, attributes: contentAttributes)
         let size = attrContent.boundingRect(with: CGSize(width: UIScreen.main.bounds.width - 20, height: .infinity),
                                             options: [.usesFontLeading, .usesLineFragmentOrigin],
                                             context: nil).size
@@ -37,7 +37,7 @@ class NovelCell: UITableViewCell {
         set { titleLabel.text = newValue}
     }
     
-    var novelContent: NSAttributedString? {
+    var chapterContent: NSAttributedString? {
         get { textView.attributedText }
         set { textView.attributedText = newValue }
     }
@@ -108,8 +108,8 @@ class NovelCell: UITableViewCell {
             self.textView.textColor = theme.textColor
             self.textView.backgroundColor = theme.backgroundColor
             self.backgroundColor = theme.backgroundColor
-            if let content = self.novelContent {
-                self.textView.attributedText = NSAttributedString(string: content.string, attributes: NovelCell.contentAttributes)
+            if let content = self.chapterContent {
+                self.textView.attributedText = NSAttributedString(string: content.string, attributes: BookContentCell.contentAttributes)
             }
         } onFontSizeChanged: { (fontSize) in
             

@@ -14,7 +14,7 @@ class BookrackViewController: UIViewController {
     
     private let emptyLabel: UILabel = UILabel()
     
-    private var novels: [NovelManager.BookrackNovelInfo] = []
+    private var books: [BookManager.BookrackBookInfo] = []
     
     init() {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -36,11 +36,11 @@ class BookrackViewController: UIViewController {
     }
     
     private func loadData() {
-        NovelManager.shared.queryLikedNovels { (result) in
+        BookManager.shared.queryLikedBooks { (result) in
             switch result {
-            case let .success(novels):
-                self.novels = novels
-                self.emptyLabel.isHidden = !novels.isEmpty
+            case let .success(books):
+                self.books = books
+                self.emptyLabel.isHidden = !books.isEmpty
                 self.collectionView.reloadData()
             case let .failure(error):
                 print(error)
@@ -51,13 +51,13 @@ class BookrackViewController: UIViewController {
 
 extension BookrackViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return novels.count
+        return books.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(NovelItemCell.self, for: indexPath)
-        let info = novels[indexPath.item]
-        cell.update(title: info.title, author: info.author, coverUrl: info.coverUrl)
+        let cell = collectionView.dequeueReusableCell(BookItemCell.self, for: indexPath)
+        let info = books[indexPath.item]
+        cell.update(title: info.title, author: info.author, coverUrl: BiqugeApi.coverUrl(id: info.id))
         return cell
     }
 }
@@ -65,8 +65,8 @@ extension BookrackViewController: UICollectionViewDataSource {
 extension BookrackViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        let info = novels[indexPath.item]
-        let controller = ChapterListViewController(novelId: info.id)
+        let info = books[indexPath.item]
+        let controller = ChapterListViewController(bookId: info.id)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }
@@ -79,7 +79,7 @@ extension BookrackViewController {
         layout.minimumInteritemSpacing = 0
         layout.sectionInset = UIEdgeInsets(top: 16, left: 32, bottom: 16, right: 32)
         
-        collectionView.register(NovelItemCell.self)
+        collectionView.register(BookItemCell.self)
         collectionView.dataSource = self
         collectionView.delegate = self
         

@@ -1,5 +1,5 @@
 //
-//  NovelNavigationBar.swift
+//  BookNavigationBar.swift
 //  BiqugeViewer
 //
 //  Created by FlyKite on 2021/4/22.
@@ -7,10 +7,10 @@
 
 import UIKit
 
-class NovelNavigationBar: UIView {
+class BookNavigationBar: UIView {
     
-    var onBackClick: ((NovelNavigationBar) -> Void)?
-    var onLikeClick: ((NovelNavigationBar) -> Void)?
+    var onBackClick: ((BookNavigationBar) -> Void)?
+    var onLikeClick: ((BookNavigationBar) -> Void)?
     
     var title: String? {
         get { titleLabel.text }

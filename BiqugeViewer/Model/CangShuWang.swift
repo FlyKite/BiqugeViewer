@@ -16,6 +16,10 @@ enum CangShuApi: Api {
     
     static var host: String { "https://www.99csw.com" }
     
+    static func coverUrl(id: String) -> String {
+        return "\(host)/book/cover.pic/cover_\(id).jpg"
+    }
+    
     var path: String {
         switch self {
         case let .bookChapters(bookId):
@@ -35,13 +39,13 @@ enum CangShuApi: Api {
     }
 }
 
-struct CangShuHandler: HtmlHandler {
-    typealias Content = ([SearchNovelInfo], Bool)
+struct CangShuSearchResultHandler: HtmlHandler {
+    typealias Content = ([BookInfo], Bool)
     
-    func handle(html: String, api: Api) throws -> ([SearchNovelInfo], Bool) {
+    func handle(html: String, api: Api) throws -> ([BookInfo], Bool) {
         let doc = try SwiftSoup.parse(html)
         let items = try doc.select("ul.list_box").select("li")
-        var results: [SearchNovelInfo] = []
+        var results: [BookInfo] = []
         for item in items {
             results.append(try handle(item: item))
         }
@@ -49,14 +53,13 @@ struct CangShuHandler: HtmlHandler {
         return (results, isEnd)
     }
     
-    private func handle(item: Element) throws -> SearchNovelInfo {
+    private func handle(item: Element) throws -> BookInfo {
         var id: String = ""
         var title: String = ""
         if let titleElement = try item.select("a").first() {
             title = try titleElement.text()
             id = try titleElement.attr("href").replacingOccurrences(of: "/book/", with: "").replacingOccurrences(of: "/index.htm", with: "")
         }
-        let coverUrl = try item.select("img").first()?.attr("src") ?? ""
         let introduce = try item.select("div.intro").first()?.text() ?? ""
         var author: String = ""
         var category: String = ""
@@ -67,47 +70,42 @@ struct CangShuHandler: HtmlHandler {
         if blocks.count > 1 {
             category = try blocks[1].select("a").first()?.text() ?? ""
         }
-        return SearchNovelInfo(id: id,
-                               coverUrl: coverUrl,
-                               title: title,
-                               author: author,
-                               category: category,
-                               introduce: introduce,
-                               latestChapterTitle: "",
-                               latestChapterTime: "")
+        return BookInfo(id: id,
+                        title: title,
+                        author: author,
+                        category: category,
+                        introduce: introduce)
     }
     
     private func getIsEnd(document: Document) throws -> Bool {
         guard let node = try document.select("div.page").last() else {
             return true
         }
-        return try node.select("a.next").last() != nil
+        return try node.select("a.next").last() == nil
     }
 }
 
-struct CangShuNovelInfoHandler: HtmlHandler {
+struct CangShuBookInfoHandler: HtmlHandler {
     
-    typealias Content = NovelInfo
+    typealias Content = BookInfo
     
-    func handle(html: String, api: Api) throws -> NovelInfo {
+    func handle(html: String, api: Api) throws -> BookInfo {
         let doc = try SwiftSoup.parse(html)
         let title = try getTitle(document: doc)
         let author = try getAuthor(document: doc)
         let introduce = try getIntroduce(document: doc)
-        let cover = try getCoverUrl(document: doc)
         let chapters = try getChapters(document: doc)
         var id: String = ""
         if case let CangShuApi.bookChapters(bookId) = api {
             id = bookId
         }
-        return NovelInfo(id: id,
-                         title: title,
-                         author: author,
-                         state: "",
-                         introduce: introduce,
-                         coverUrl: cover,
-                         pageNameList: [],
-                         chapters: chapters)
+        return BookInfo(id: id,
+                        title: title,
+                        author: author,
+                        category: "",
+                        introduce: introduce,
+                        pageNameList: [],
+                        chapters: chapters)
     }
     
     private func getTitle(document: Document) throws -> String {
@@ -122,19 +120,15 @@ struct CangShuNovelInfoHandler: HtmlHandler {
         return try document.select("div.intro").first()?.text() ?? ""
     }
     
-    private func getCoverUrl(document: Document) throws -> String {
-        return try document.getElementById("book_info")?.select("img").first()?.attr("src") ?? ""
-    }
-    
-    private func getChapters(document: Document) throws -> [NovelChapter] {
-        guard let list = try document.select("ul.chapter").last() else {
+    private func getChapters(document: Document) throws -> [BookInfo.ChapterItem] {
+        guard let list = try document.select("dl#dir").last() else {
             throw NSError(domain: "Chapter list not found", code: -999, userInfo: nil)
         }
-        var result: [NovelChapter] = []
+        var result: [BookInfo.ChapterItem] = []
         for child in list.children() {
-            guard child.tagName() == "li" else { continue }
+            guard child.tagName() == "dd" else { continue }
             guard let link = try? child.getElementsByTag("a").first() else { continue }
-            result.append(NovelChapter(title: try link.text(), link: try link.attr("href")))
+            result.append(BookInfo.ChapterItem(title: try link.text(), link: try link.attr("href")))
         }
         return result
     }

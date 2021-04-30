@@ -12,19 +12,25 @@ import SwiftSoup
 /// 笔趣阁
 enum BiqugeApi: Api {
     case homeRecommend
-    case chapterList(novelId: String, page: Int)
-    case novelContent(path: String)
+    case chapterList(bookId: String, page: Int)
+    case bookContent(path: String)
     case searchBooks(keyword: String, page: Int)
     
     static var host: String { "https://m.biquge.com.cn" }
+    
+    static func coverUrl(id: String) -> String {
+        guard id.count > 3 else { return "" }
+        let endIndex = id.index(id.startIndex, offsetBy: id.count - 3)
+        return "https://www.biquge.com.cn/files/article/image/\(String(id[..<endIndex]))/\(id)/\(id)s.jpg"
+    }
     
     var path: String {
         switch self {
         case .homeRecommend:
             return "/"
-        case let .chapterList(novelId, page):
-            return "/book/\(novelId)/".appending(page > 1 ? "index_\(page).html" : "")
-        case let .novelContent(path):
+        case let .chapterList(bookId, page):
+            return "/book/\(bookId)/".appending(page > 1 ? "index_\(page).html" : "")
+        case let .bookContent(path):
             return path
         case .searchBooks:
             return "/search.php"
@@ -35,7 +41,7 @@ enum BiqugeApi: Api {
         switch self {
         case .homeRecommend,
              .chapterList,
-             .novelContent:
+             .bookContent:
             return nil
         case let .searchBooks(keyword, page):
             return ["q": keyword, "p": page]
@@ -53,9 +59,9 @@ struct BiqugeRecommendHandler: HtmlHandler {
         for element in elements {
             let title = try getTitle(element: element)
             guard let block = try element.select("div.block").first() else { continue }
-            let mainNovel = try getMainNovel(element: block)
-            let novels = try getNovels(element: block)
-            recommends.append(HomeRecommend(category: title, mainNovel: mainNovel, novels: novels))
+            let mainBook = try getMainBook(element: block)
+            let books = try getBooks(element: block)
+            recommends.append(HomeRecommend(category: title, mainBook: mainBook, books: books))
         }
         return recommends
     }
@@ -64,7 +70,7 @@ struct BiqugeRecommendHandler: HtmlHandler {
         return try element.select("h2.title").select("span").first()?.text() ?? ""
     }
     
-    private func getMainNovel(element: Element) throws -> HomeRecommend.RecommendNovel? {
+    private func getMainBook(element: Element) throws -> HomeRecommend.BookInfo? {
         guard let div = try element.select("div.block_txt").first() else { return nil }
         guard let img = try element.select("div.block_img").select("a").first() else { return nil }
         let id = try img.attr("href").replacingOccurrences(of: "book", with: "").replacingOccurrences(of: "/", with: "")
@@ -85,12 +91,12 @@ struct BiqugeRecommendHandler: HtmlHandler {
                 }
             }
         }
-        return HomeRecommend.RecommendNovel(id: id, title: title ?? "", author: author ?? "", introduce: introduce ?? "")
+        return HomeRecommend.BookInfo(id: id, title: title ?? "", author: author ?? "", introduce: introduce ?? "")
     }
     
-    private func getNovels(element: Element) throws -> [HomeRecommend.RecommendNovel] {
+    private func getBooks(element: Element) throws -> [HomeRecommend.BookInfo] {
         guard let list = try element.select("ul").first()?.select("li") else { return [] }
-        var results: [HomeRecommend.RecommendNovel] = []
+        var results: [HomeRecommend.BookInfo] = []
         for item in list {
             let nodes = item.getChildNodes()
             var id: String = ""
@@ -104,36 +110,34 @@ struct BiqugeRecommendHandler: HtmlHandler {
                 author = node.text().replacingOccurrences(of: "/", with: "")
             }
             if !id.isEmpty {
-                results.append(HomeRecommend.RecommendNovel(id: id, title: title, author: author, introduce: nil))
+                results.append(HomeRecommend.BookInfo(id: id, title: title, author: author, introduce: nil))
             }
         }
         return results
     }
 }
 
-struct BiqugeNovelInfoHandler: HtmlHandler {
-    typealias Content = NovelInfo
+struct BiqugeBookInfoHandler: HtmlHandler {
+    typealias Content = BookInfo
     
-    func handle(html: String, api: Api) throws -> NovelInfo {
+    func handle(html: String, api: Api) throws -> BookInfo {
         let doc = try SwiftSoup.parse(html)
         let title = try getTitle(document: doc)
         let (author, state) = try getAuthorAndState(document: doc)
         let introduce = try getIntroduce(document: doc)
-        let cover = try getCoverUrl(document: doc)
         let pages = try getPageList(document: doc)
         let chapters = try getChapters(document: doc)
         var id: String = ""
-        if case let BiqugeApi.chapterList(novelId, _) = api {
-            id = novelId
+        if case let BiqugeApi.chapterList(bookId, _) = api {
+            id = bookId
         }
-        return NovelInfo(id: id,
-                         title: title,
-                         author: author,
-                         state: state,
-                         introduce: introduce,
-                         coverUrl: cover,
-                         pageNameList: pages,
-                         chapters: chapters)
+        return BookInfo(id: id,
+                        title: title,
+                        author: author,
+                        category: state,
+                        introduce: introduce,
+                        pageNameList: pages,
+                        chapters: chapters)
     }
     
     private func getTitle(document: Document) throws -> String {
@@ -159,10 +163,6 @@ struct BiqugeNovelInfoHandler: HtmlHandler {
         return try document.select("div.intro_info").first()?.text() ?? ""
     }
     
-    private func getCoverUrl(document: Document) throws -> String {
-        return try document.select("div.block_img2").select("img").first()?.attr("src") ?? ""
-    }
-    
     private func getPageList(document: Document) throws -> [String] {
         guard let options = try document.select("div.listpage").select("span.middle").select("select").first()?.select("option") else {
             return []
@@ -174,33 +174,33 @@ struct BiqugeNovelInfoHandler: HtmlHandler {
         return results
     }
     
-    private func getChapters(document: Document) throws -> [NovelChapter] {
+    private func getChapters(document: Document) throws -> [BookInfo.ChapterItem] {
         guard let list = try document.select("ul.chapter").last() else {
             throw NSError(domain: "Chapter list not found", code: -999, userInfo: nil)
         }
-        var result: [NovelChapter] = []
+        var result: [BookInfo.ChapterItem] = []
         for child in list.children() {
             guard child.tagName() == "li" else { continue }
             guard let link = try? child.getElementsByTag("a").first() else { continue }
-            result.append(NovelChapter(title: try link.text(), link: try link.attr("href")))
+            result.append(BookInfo.ChapterItem(title: try link.text(), link: try link.attr("href")))
         }
         return result
     }
 }
 
-struct BiqugeNovelHandler: HtmlHandler {
-    typealias Content = Novel
+struct BiqugeBookChapterHandler: HtmlHandler {
+    typealias Content = BookChapter
     
-    func handle(html: String, api: Api) throws -> Novel {
+    func handle(html: String, api: Api) throws -> BookChapter {
         let doc = try SwiftSoup.parse(html)
         let title = try getTitle(document: doc)
         let nextChapterLink = try getNextChapterLink(document: doc)
         let content = try getContent(document: doc)
         var link: String = ""
-        if case let BiqugeApi.novelContent(path) = api {
+        if case let BiqugeApi.bookContent(path) = api {
             link = path
         }
-        return Novel(link: link, html: html, title: title, content: content, nextChapterLink: nextChapterLink)
+        return BookChapter(link: link, html: html, title: title, content: content, nextChapterLink: nextChapterLink)
     }
     
     private func getTitle(document: Document) throws -> String {
@@ -217,7 +217,7 @@ struct BiqugeNovelHandler: HtmlHandler {
     
     private func getContent(document: Document) throws -> String {
         guard let div = try document.select("div#nr").first() else {
-            throw NSError(domain: "Novel content not found", code: -999, userInfo: nil)
+            throw NSError(domain: "Book content not found", code: -999, userInfo: nil)
         }
         var text = ""
         var nodeStack: [Node] = div.getChildNodes().reversed()
@@ -238,12 +238,12 @@ struct BiqugeNovelHandler: HtmlHandler {
 }
 
 struct BiqugeSearchResultHandler: HtmlHandler {
-    typealias Content = ([SearchNovelInfo], Bool)
+    typealias Content = ([BookInfo], Bool)
     
-    func handle(html: String, api: Api) throws -> ([SearchNovelInfo], Bool) {
+    func handle(html: String, api: Api) throws -> ([BookInfo], Bool) {
         let doc = try SwiftSoup.parse(html)
         let items = try doc.select("div.result-item")
-        var results: [SearchNovelInfo] = []
+        var results: [BookInfo] = []
         for item in items {
             results.append(try handle(item: item))
         }
@@ -251,19 +251,16 @@ struct BiqugeSearchResultHandler: HtmlHandler {
         return (results, isEnd)
     }
     
-    private func handle(item: Element) throws -> SearchNovelInfo {
+    private func handle(item: Element) throws -> BookInfo {
         var id: String = ""
         var title: String = ""
         if let titleElement = try item.select("a.result-game-item-title-link").first() {
             title = try titleElement.text()
             id = try titleElement.attr("href").replacingOccurrences(of: "book", with: "").replacingOccurrences(of: "/", with: "")
         }
-        let coverUrl = try item.select("img.result-game-item-pic-link-img").first()?.attr("src") ?? ""
         let introduce = try item.select("p.result-game-item-desc").first()?.text() ?? ""
         var author: String = ""
         var category: String = ""
-        var latestChapterTitle: String = ""
-        var latestChapterTime: String = ""
         if let div = try item.select("div.result-game-item-info").first() {
             func getText(element: Element) throws -> String {
                 guard element.children().count >= 2 else { return "" }
@@ -276,21 +273,12 @@ struct BiqugeSearchResultHandler: HtmlHandler {
             if children.count > 2 {
                 category = try getText(element: children[1])
             }
-            if children.count > 3 {
-                latestChapterTime = try getText(element: children[2])
-            }
-            if children.count > 4 {
-                latestChapterTitle = try getText(element: children[3])
-            }
         }
-        return SearchNovelInfo(id: id,
-                               coverUrl: coverUrl,
-                               title: title,
-                               author: author,
-                               category: category,
-                               introduce: introduce,
-                               latestChapterTitle: latestChapterTitle,
-                               latestChapterTime: latestChapterTime)
+        return BookInfo(id: id,
+                        title: title,
+                        author: author,
+                        category: category,
+                        introduce: introduce)
     }
     
     private func getIsEnd(document: Document) throws -> Bool {

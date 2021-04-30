@@ -9,10 +9,10 @@ import UIKit
 
 class ChapterListViewController: UIViewController {
     
-    let novelId: String
+    let bookId: String
     
-    init(novelId: String) {
-        self.novelId = novelId
+    init(bookId: String) {
+        self.bookId = bookId
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -20,14 +20,14 @@ class ChapterListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let navigationBar: NovelNavigationBar = NovelNavigationBar()
-    private let infoView: NovelInfoView = NovelInfoView()
+    private let navigationBar: BookNavigationBar = BookNavigationBar()
+    private let infoView: BookInfoView = BookInfoView()
     private let tableView: UITableView = UITableView()
     private let loadingView: LoadingFooterView = LoadingFooterView(frame: CGRect(x: 0, y: 0, width: 0, height: 56))
     
     private var page: Int = 1
-    private var novelInfo: NovelInfo?
-    private var novelChapters: [NovelChapter] = []
+    private var bookInfo: BookInfo?
+    private var chapters: [BookInfo.ChapterItem] = []
     
     private var isEnd: Bool = false
     private var lastReadChapterTitle: String?
@@ -35,14 +35,14 @@ class ChapterListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        NovelManager.lastViewNovelId = novelId
+        BookManager.lastViewBookId = bookId
         setupViews()
         loadData(nextPage: false)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NovelManager.shared.queryNovelLikeAndLastRead(novelId: novelId) { (result) in
+        BookManager.shared.queryBookLikeAndLastRead(bookId: bookId) { (result) in
             switch result {
             case let .success(info):
                 guard let info = info else { return }
@@ -66,36 +66,36 @@ class ChapterListViewController: UIViewController {
     }
     
     deinit {
-        NovelManager.lastViewNovelId = nil
+        BookManager.lastViewBookId = nil
     }
     
     private func loadData(nextPage: Bool) {
         guard !loadingView.isLoading else { return }
-        let novelId = novelId
+        let bookId = bookId
         let page = self.page + (nextPage ? 1 : 0)
-        if let pageCount = novelInfo?.pageNameList.count, page > pageCount {
+        if let pageCount = bookInfo?.pageNameList.count, page > pageCount {
             return
         }
         loadingView.state = .loading
-        Network.request(BiqugeApi.chapterList(novelId: novelId, page: page), handler: BiqugeNovelInfoHandler()) { result in
+        Network.request(BiqugeApi.chapterList(bookId: bookId, page: page), handler: BiqugeBookInfoHandler()) { result in
             switch result {
             case let .success(info):
                 self.page = page
                 self.loadingView.state = .stopped(tips: "加载完毕")
-                self.novelInfo = info
+                self.bookInfo = info
                 self.navigationBar.title = info.title
                 self.infoView.isHidden = false
                 self.infoView.updateInfo(title: info.title,
                                          author: info.author,
-                                         state: info.state,
+                                         category: info.category,
                                          introduce: info.introduce,
-                                         coverUrl: info.coverUrl)
+                                         coverUrl: CangShuApi.coverUrl(id: info.id))
                 if nextPage {
-                    self.novelChapters.append(contentsOf: info.chapters)
+                    self.chapters.append(contentsOf: info.chapters)
                 } else {
-                    self.novelChapters = info.chapters
+                    self.chapters = info.chapters
                 }
-                NovelManager.shared.insertNovel(novel: info) { (error) in
+                BookManager.shared.insertBook(book: info) { (error) in
                     if let error = error {
                         print(error)
                     }
@@ -120,11 +120,11 @@ class ChapterListViewController: UIViewController {
     }
     
     @objc private func retryLoadData() {
-        loadData(nextPage: !novelChapters.isEmpty)
+        loadData(nextPage: !chapters.isEmpty)
     }
     
     private func likeButtonClicked() {
-        NovelManager.shared.setNovelLiked(novelId: novelId, isLiked: !navigationBar.isLiked) { (error) in
+        BookManager.shared.setBookLiked(bookId: bookId, isLiked: !navigationBar.isLiked) { (error) in
             if let error = error {
                 print(error)
             } else {
@@ -136,12 +136,12 @@ class ChapterListViewController: UIViewController {
 
 extension ChapterListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return novelChapters.count
+        return chapters.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(NovelChapterCell.self, for: indexPath)
-        let chapter = novelChapters[indexPath.row]
+        let cell = tableView.dequeueReusableCell(BookCahpterCell.self, for: indexPath)
+        let chapter = chapters[indexPath.row]
         cell.name = chapter.title
         return cell
     }
@@ -150,15 +150,15 @@ extension ChapterListViewController: UITableViewDataSource {
 extension ChapterListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.row < novelChapters.count {
-            let chapter = novelChapters[indexPath.row]
-            let controller = NovelViewController(novelId: novelId, link: chapter.link)
+        if indexPath.row < chapters.count {
+            let chapter = chapters[indexPath.row]
+            let controller = BookViewController(bookId: bookId, link: chapter.link)
             navigationController?.pushViewController(controller, animated: true)
         }
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == novelChapters.count - 10 {
+        if indexPath.row == chapters.count - 10 {
             loadData(nextPage: true)
         }
     }
@@ -179,10 +179,10 @@ extension ChapterListViewController {
         infoView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 168)
         infoView.isHidden = true
         infoView.chooseChapterPageAction = { [weak self] in
-            guard let self = self, let pageNames = self.novelInfo?.pageNameList else { return }
+            guard let self = self, let pageNames = self.bookInfo?.pageNameList else { return }
             let controller = ChapterPageViewController(pageNames: pageNames) { (index) in
                 self.page = index + 1
-                self.novelChapters = []
+                self.chapters = []
                 self.tableView.reloadData()
                 self.loadData(nextPage: false)
             }
@@ -190,11 +190,11 @@ extension ChapterListViewController {
         }
         infoView.lastReadChapterClickAction = { [weak self] in
             guard let self = self, let link = self.lastReadChapterLink else { return }
-            let controller = NovelViewController(novelId: self.novelId, link: link)
+            let controller = BookViewController(bookId: self.bookId, link: link)
             self.navigationController?.pushViewController(controller, animated: true)
         }
         
-        tableView.register(NovelChapterCell.self)
+        tableView.register(BookCahpterCell.self)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 56

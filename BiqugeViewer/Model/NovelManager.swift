@@ -1,5 +1,5 @@
 //
-//  NovelManager.swift
+//  BookManager.swift
 //  BiqugeViewer
 //
 //  Created by FlyKite on 2021/4/22.
@@ -8,47 +8,40 @@
 import Foundation
 import CoreData
 
-class NovelManager {
+class BookManager {
     
     @DefaultsProperty(key: "lastViewNovelId", defaultValue: nil)
-    static var lastViewNovelId: String?
+    static var lastViewBookId: String?
     
     @DefaultsProperty(key: "lastViewNovelLink", defaultValue: nil)
-    static var lastViewNovelLink: String?
+    static var lastViewBookLink: String?
     
-    struct NovelUserInfo {
+    struct BookUserInfo {
         let isLiked: Bool
         let lastReadTitle: String?
         let lastReadLink: String?
     }
     
-    struct BookrackNovelInfo {
+    struct BookrackBookInfo {
         let id: String
         let title: String
         let author: String
-        let coverUrl: String
     }
     
-    static let shared: NovelManager = NovelManager()
+    static let shared: BookManager = BookManager()
     
-    private let queue: DispatchQueue = DispatchQueue(label: "com.flykite.BiqugeViewer.NovelManager", attributes: .concurrent)
+    private let queue: DispatchQueue = DispatchQueue(label: "com.flykite.BiqugeViewer.BookManager", attributes: .concurrent)
     
-    static func novelCoverUrl(novelId: String) -> String {
-        guard novelId.count > 3 else { return "" }
-        let endIndex = novelId.index(novelId.startIndex, offsetBy: novelId.count - 3)
-        return "https://www.biquge.com.cn/files/article/image/\(String(novelId[..<endIndex]))/\(novelId)/\(novelId)s.jpg"
-    }
-    
-    func setNovelLiked(novelId: String, isLiked: Bool, completion: ((Error?) -> Void)?) {
-        updateNovel(novelId) { (entity) in
+    func setBookLiked(bookId: String, isLiked: Bool, completion: ((Error?) -> Void)?) {
+        updateBook(bookId) { (entity) in
             entity.isLiked = isLiked
         } completion: { (error) in
             completion?(error)
         }
     }
     
-    func setNovelLastRead(novelId: String, title: String, link: String, completion: ((Error?) -> Void)?) {
-        updateNovel(novelId) { (entity) in
+    func setBookLastRead(bookId: String, title: String, link: String, completion: ((Error?) -> Void)?) {
+        updateBook(bookId) { (entity) in
             entity.lastReadTitle = title
             entity.lastReadLink = link
         } completion: { (error) in
@@ -56,7 +49,7 @@ class NovelManager {
         }
     }
     
-    func insertNovel(novel: NovelInfo, completion: ((Error?) -> Void)?) {
+    func insertBook(book: BookInfo, completion: ((Error?) -> Void)?) {
         guard let context = DBUtil.context else {
             completion?(NSError(domain: "Can not create context", code: -999, userInfo: nil))
             return
@@ -64,19 +57,17 @@ class NovelManager {
         queue.async {
             var err: Error?
             do {
-                if let entity = try self.queryNovelEntity(id: novel.id, in: context) {
-                    entity.id = novel.id
-                    entity.title = novel.title
-                    entity.author = novel.author
-                    entity.coverUrl = novel.coverUrl
+                if let entity = try self.queryBookEntity(id: book.id, in: context) {
+                    entity.id = book.id
+                    entity.title = book.title
+                    entity.author = book.author
                     if context.hasChanges {
                         try context.save()
                     }
-                } else if let entity = NovelEntity.insertNewObject(into: context) {
-                    entity.id = novel.id
-                    entity.title = novel.title
-                    entity.author = novel.author
-                    entity.coverUrl = novel.coverUrl
+                } else if let entity = BookEntity.insertNewObject(into: context) {
+                    entity.id = book.id
+                    entity.title = book.title
+                    entity.author = book.author
                     try context.save()
                 } else {
                     err = NSError(domain: "Unknown error", code: -999, userInfo: nil)
@@ -90,26 +81,25 @@ class NovelManager {
         }
     }
     
-    func queryLikedNovels(completion: ((Result<[BookrackNovelInfo], Error>) -> Void)?) {
+    func queryLikedBooks(completion: ((Result<[BookrackBookInfo], Error>) -> Void)?) {
         guard let context = DBUtil.context else {
             completion?(.failure(NSError(domain: "Can not create context", code: -999, userInfo: nil)))
             return
         }
         queue.async {
-            let result: Result<[BookrackNovelInfo], Error>
+            let result: Result<[BookrackBookInfo], Error>
             do {
-                let request: NSFetchRequest<NovelEntity> = NovelEntity.fetchRequest()
+                let request: NSFetchRequest<BookEntity> = BookEntity.fetchRequest()
                 request.predicate = NSPredicate(format: "isLiked = true")
                 let records = try context.fetch(request)
-                var novels: [BookrackNovelInfo] = []
+                var books: [BookrackBookInfo] = []
                 for record in records {
                     guard let id = record.id else { continue }
-                    novels.append(BookrackNovelInfo(id: id,
-                                                    title: record.title ?? "",
-                                                    author: record.author ?? "",
-                                                    coverUrl: record.coverUrl ?? ""))
+                    books.append(BookrackBookInfo(id: id,
+                                                  title: record.title ?? "",
+                                                  author: record.author ?? ""))
                 }
-                result = .success(novels)
+                result = .success(books)
             } catch {
                 result = .failure(error)
             }
@@ -119,18 +109,18 @@ class NovelManager {
         }
     }
     
-    func queryNovelLikeAndLastRead(novelId: String, completion: ((Result<NovelUserInfo?, Error>) -> Void)?) {
+    func queryBookLikeAndLastRead(bookId: String, completion: ((Result<BookUserInfo?, Error>) -> Void)?) {
         guard let context = DBUtil.context else {
             completion?(.failure(NSError(domain: "Can not create context", code: -999, userInfo: nil)))
             return
         }
         queue.async {
-            let result: Result<NovelUserInfo?, Error>
+            let result: Result<BookUserInfo?, Error>
             do {
-                if let entity = try self.queryNovelEntity(id: novelId, in: context) {
-                    let info = NovelUserInfo(isLiked: entity.isLiked,
-                                             lastReadTitle: entity.lastReadTitle,
-                                             lastReadLink: entity.lastReadLink)
+                if let entity = try self.queryBookEntity(id: bookId, in: context) {
+                    let info = BookUserInfo(isLiked: entity.isLiked,
+                                            lastReadTitle: entity.lastReadTitle,
+                                            lastReadLink: entity.lastReadLink)
                     result = .success(info)
                 } else {
                     result = .success(nil)
@@ -144,7 +134,7 @@ class NovelManager {
         }
     }
     
-    private func updateNovel(_ novelInfo: NovelInfo, updateAction: @escaping (NovelEntity) -> Void, completion: ((Error?) -> Void)?) {
+    private func updateBook(_ bookInfo: BookInfo, updateAction: @escaping (BookEntity) -> Void, completion: ((Error?) -> Void)?) {
         guard let context = DBUtil.context else {
             completion?(NSError(domain: "Can not create context", code: -999, userInfo: nil))
             return
@@ -152,16 +142,15 @@ class NovelManager {
         queue.async {
             var err: Error?
             do {
-                if let entity = try self.queryNovelEntity(id: novelInfo.id, in: context) {
+                if let entity = try self.queryBookEntity(id: bookInfo.id, in: context) {
                     updateAction(entity)
                     if context.hasChanges {
                         try context.save()
                     }
-                } else if let entity = NovelEntity.insertNewObject(into: context) {
-                    entity.id = novelInfo.id
-                    entity.title = novelInfo.title
-                    entity.author = novelInfo.author
-                    entity.coverUrl = novelInfo.coverUrl
+                } else if let entity = BookEntity.insertNewObject(into: context) {
+                    entity.id = bookInfo.id
+                    entity.title = bookInfo.title
+                    entity.author = bookInfo.author
                     updateAction(entity)
                     try context.save()
                 } else {
@@ -176,7 +165,7 @@ class NovelManager {
         }
     }
     
-    private func updateNovel(_ novelId: String, updateAction: @escaping (NovelEntity) -> Void, completion: ((Error?) -> Void)?) {
+    private func updateBook(_ bookId: String, updateAction: @escaping (BookEntity) -> Void, completion: ((Error?) -> Void)?) {
         guard let context = DBUtil.context else {
             completion?(NSError(domain: "Can not create context", code: -999, userInfo: nil))
             return
@@ -184,8 +173,8 @@ class NovelManager {
         queue.async {
             var err: Error?
             do {
-                guard let entity = try self.queryNovelEntity(id: novelId, in: context) else {
-                    throw NSError(domain: "Entity not found", code: -999, userInfo: ["novelId": novelId])
+                guard let entity = try self.queryBookEntity(id: bookId, in: context) else {
+                    throw NSError(domain: "Entity not found", code: -999, userInfo: ["bookId": bookId])
                 }
                 updateAction(entity)
                 if context.hasChanges {
@@ -200,8 +189,8 @@ class NovelManager {
         }
     }
     
-    private func queryNovelEntity(id: String, in context: NSManagedObjectContext) throws -> NovelEntity? {
-        let request: NSFetchRequest<NovelEntity> = NovelEntity.fetchRequest()
+    private func queryBookEntity(id: String, in context: NSManagedObjectContext) throws -> BookEntity? {
+        let request: NSFetchRequest<BookEntity> = BookEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", id)
         let records = try context.fetch(request)
         return records.first

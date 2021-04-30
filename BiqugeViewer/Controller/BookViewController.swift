@@ -1,5 +1,5 @@
 //
-//  NovelViewController.swift
+//  BookViewController.swift
 //  BiqugeViewer
 //
 //  Created by FlyKite on 2021/4/20.
@@ -8,13 +8,13 @@
 import UIKit
 import SnapKit
 
-class NovelViewController: UIViewController {
+class BookViewController: UIViewController {
     
-    let novelId: String
+    let bookId: String
     let link: String
     
-    init(novelId: String, link: String) {
-        self.novelId = novelId
+    init(bookId: String, link: String) {
+        self.bookId = bookId
         self.link = link
         super.init(nibName: nil, bundle: nil)
     }
@@ -23,37 +23,37 @@ class NovelViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let navigationBar: NovelNavigationBar = NovelNavigationBar()
-    private let settingView: NovelSettingView = NovelSettingView()
+    private let navigationBar: BookNavigationBar = BookNavigationBar()
+    private let settingView: BookSettingView = BookSettingView()
     private let tableView: UITableView = UITableView()
     private let loadingView: LoadingFooterView = LoadingFooterView(frame: CGRect(x: 0, y: 0, width: 0, height: 56))
     
-    private var novels: [Novel] = []
-    private var novelSizeCache: [String: CGSize] = [:]
+    private var chapters: [BookChapter] = []
+    private var contentSizeCache: [String: CGSize] = [:]
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        NovelManager.lastViewNovelLink = link
+        BookManager.lastViewBookLink = link
         setupViews()
         loadData()
     }
     
     deinit {
-        NovelManager.lastViewNovelLink = nil
+        BookManager.lastViewBookLink = nil
     }
     
     private func loadData() {
         guard !loadingView.isLoading else { return }
-        guard let link = novels.isEmpty ? self.link : novels.last?.nextChapterLink else { return }
+        guard let link = chapters.isEmpty ? self.link : chapters.last?.nextChapterLink else { return }
         loadingView.state = .loading
-        Network.request(BiqugeApi.novelContent(path: link), handler: BiqugeNovelHandler()) { result in
+        Network.request(BiqugeApi.bookContent(path: link), handler: BiqugeBookChapterHandler()) { result in
             switch result {
-            case let .success(novel):
+            case let .success(chapter):
                 if self.navigationBar.title == nil {
-                    self.navigationBar.title = novel.title
+                    self.navigationBar.title = chapter.title
                 }
                 self.loadingView.state = .stopped(tips: "加载完成")
-                self.novels.append(novel)
+                self.chapters.append(chapter)
             case let .failure(error):
                 self.loadingView.state = .stopped(tips: "加载失败，点击重试")
                 print(error)
@@ -107,17 +107,17 @@ class NovelViewController: UIViewController {
     }
 }
 
-extension NovelViewController: UITableViewDataSource {
+extension BookViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return novels.count
+        return chapters.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(NovelCell.self, for: indexPath)
-        let novel = novels[indexPath.row]
-        cell.title = novel.title
-        cell.novelContent = NSAttributedString(string: novel.content, attributes: NovelCell.contentAttributes)
-        if let size = novelSizeCache[novel.link] {
+        let cell = tableView.dequeueReusableCell(BookContentCell.self, for: indexPath)
+        let chapter = chapters[indexPath.row]
+        cell.title = chapter.title
+        cell.chapterContent = NSAttributedString(string: chapter.content, attributes: BookContentCell.contentAttributes)
+        if let size = contentSizeCache[chapter.link] {
             cell.horizontalPadding = (view.bounds.width - size.width) / 2
         }
         cell.onTap = { [weak self] (tap) in
@@ -128,34 +128,34 @@ extension NovelViewController: UITableViewDataSource {
     }
 }
 
-extension NovelViewController: UITableViewDelegate {
+extension BookViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let novel = novels[indexPath.row]
-        if let size = novelSizeCache[novel.link] {
+        let chapter = chapters[indexPath.row]
+        if let size = contentSizeCache[chapter.link] {
             return size.height
         }
-        let size = NovelCell.size(for: novel)
-        novelSizeCache[novel.link] = size
+        let size = BookContentCell.size(for: chapter)
+        contentSizeCache[chapter.link] = size
         return size.height
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        let novel = novels[indexPath.row]
-        if let size = novelSizeCache[novel.link] {
+        let chapter = chapters[indexPath.row]
+        if let size = contentSizeCache[chapter.link] {
             return size.height
         }
         return UIScreen.main.bounds.height
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let novel = novels[indexPath.row]
-        NovelManager.lastViewNovelLink = novel.link
-        NovelManager.shared.setNovelLastRead(novelId: novelId, title: novel.title, link: novel.link) { (error) in
+        let chapter = chapters[indexPath.row]
+        BookManager.lastViewBookLink = chapter.link
+        BookManager.shared.setBookLastRead(bookId: bookId, title: chapter.title, link: chapter.link) { (error) in
             if let error = error {
                 print(error)
             }
         }
-        if indexPath.row == novels.count - 1 {
+        if indexPath.row == chapters.count - 1 {
             loadData()
         }
     }
@@ -168,14 +168,14 @@ extension NovelViewController: UITableViewDelegate {
                 toggleSettingView()
             }
         }
-        guard let cell = tableView.visibleCells.first as? NovelCell else { return }
+        guard let cell = tableView.visibleCells.first as? BookContentCell else { return }
         navigationBar.title = cell.title
     }
 }
 
-extension NovelViewController {
+extension BookViewController {
     private func setupViews() {
-        tableView.register(NovelCell.self)
+        tableView.register(BookContentCell.self)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorInset = .zero
@@ -216,11 +216,11 @@ extension NovelViewController {
             self.tableView.backgroundColor = theme.backgroundColor
         } onFontSizeChanged: { [weak self] (fontSize) in
             guard let self = self else { return }
-            self.novelSizeCache = [:]
+            self.contentSizeCache = [:]
             self.tableView.reloadData()
         } onLineSpacingChanged: { [weak self] (lineSpacing) in
             guard let self = self else { return }
-            self.novelSizeCache = [:]
+            self.contentSizeCache = [:]
             self.tableView.reloadData()
         }
 

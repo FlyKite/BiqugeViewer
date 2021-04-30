@@ -1,5 +1,5 @@
 //
-//  NovelHeaderView.swift
+//  BookSettingView.swift
 //  BiqugeViewer
 //
 //  Created by FlyKite on 2021/4/22.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class NovelSettingView: UIView {
+class BookSettingView: UIView {
     
     private let contentView: UIView = UIView()
     private let stackView: UIStackView = UIStackView()

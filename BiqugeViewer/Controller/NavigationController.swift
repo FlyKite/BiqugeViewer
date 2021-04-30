@@ -14,12 +14,12 @@ class NavigationController: UINavigationController {
         navigationBar.isHidden = true
         
         var viewControllers: [UIViewController] = [HomeViewController()]
-        if let novelId = NovelManager.lastViewNovelId {
-            let controller = ChapterListViewController(novelId: novelId)
+        if let bookId = BookManager.lastViewBookId {
+            let controller = ChapterListViewController(bookId: bookId)
             viewControllers.append(controller)
             
-            if let link = NovelManager.lastViewNovelLink {
-                let controller = NovelViewController(novelId: novelId, link: link)
+            if let link = BookManager.lastViewBookLink {
+                let controller = BookViewController(bookId: bookId, link: link)
                 viewControllers.append(controller)
             }
         }
