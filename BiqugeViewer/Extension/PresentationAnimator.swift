@@ -130,7 +130,7 @@ extension UIViewController {
 }
 
 // MARK: - Dismiss
-public extension CustomPresentableViewController where Self: UIViewController {
+public extension CustomPresentableViewController {
     /// 隐藏浮动面板（可交互的）
     ///
     /// - Parameters:
@@ -157,7 +157,7 @@ public extension CustomPresentableViewController where Self: UIViewController {
 }
 
 // MARK: - Private
-extension CustomPresentableViewController where Self: UIViewController {
+extension CustomPresentableViewController {
     fileprivate func configPresentationAnimator(with interactiveTransition: UIViewControllerInteractiveTransitioning?) {
         let config = presentationAnimationConfigs()
         let transitioningManager = PresentationTransitioning(animator: self, config: config)
