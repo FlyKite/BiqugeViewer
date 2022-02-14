@@ -89,7 +89,7 @@ class ChapterListViewController: UIViewController {
                                          author: info.author,
                                          category: info.category,
                                          introduce: info.introduce,
-                                         coverUrl: CangShuApi.coverUrl(id: info.id))
+                                         coverUrl: BiqugeApi.coverUrl(id: info.id))
                 if nextPage {
                     self.chapters.append(contentsOf: info.chapters)
                 } else {

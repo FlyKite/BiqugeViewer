@@ -16,12 +16,12 @@ enum BiqugeApi: Api {
     case bookContent(path: String)
     case searchBooks(keyword: String, page: Int)
     
-    static var host: String { "https://m.biquge.com.cn" }
+    static var host: String { "https://m.biquge.biz" }
     
     static func coverUrl(id: String) -> String {
         guard id.count > 3 else { return "" }
         let endIndex = id.index(id.startIndex, offsetBy: id.count - 3)
-        return "https://www.biquge.com.cn/files/article/image/\(String(id[..<endIndex]))/\(id)/\(id)s.jpg"
+        return "https://www.biquge.biz/files/article/image/\(String(id[..<endIndex]))/\(id)/\(id)s.jpg"
     }
     
     var path: String {
@@ -29,7 +29,9 @@ enum BiqugeApi: Api {
         case .homeRecommend:
             return "/"
         case let .chapterList(bookId, page):
-            return "/book/\(bookId)/".appending(page > 1 ? "index_\(page).html" : "")
+            guard bookId.count > 3 else { return "" }
+            let endIndex = bookId.index(bookId.startIndex, offsetBy: bookId.count - 3)
+            return "/\(String(bookId[..<endIndex]))/\(bookId)/".appending(page > 1 ? "index_\(page).html" : "")
         case let .bookContent(path):
             return path
         case .searchBooks:
@@ -45,6 +47,15 @@ enum BiqugeApi: Api {
             return nil
         case let .searchBooks(keyword, page):
             return ["q": keyword, "p": page]
+        }
+    }
+    
+    var responseEncoding: String.Encoding {
+        switch self {
+        case .homeRecommend, .chapterList, .bookContent:
+            return String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
+        default:
+            return .utf8
         }
     }
 }
@@ -73,7 +84,7 @@ struct BiqugeRecommendHandler: HtmlHandler {
     private func getMainBook(element: Element) throws -> HomeRecommend.BookInfo? {
         guard let div = try element.select("div.block_txt").first() else { return nil }
         guard let img = try element.select("div.block_img").select("a").first() else { return nil }
-        let id = try img.attr("href").replacingOccurrences(of: "book", with: "").replacingOccurrences(of: "/", with: "")
+        let id = try img.attr("href").components(separatedBy: "/").last(where: { !$0.isEmpty }) ?? ""
         var title: String?
         var author: String?
         var introduce: String?
@@ -103,7 +114,7 @@ struct BiqugeRecommendHandler: HtmlHandler {
             var title: String = ""
             var author: String = ""
             if let node = nodes.first as? Element, node.tagName() == "a" {
-                id = try node.attr("href").replacingOccurrences(of: "book", with: "").replacingOccurrences(of: "/", with: "")
+                id = try node.attr("href").components(separatedBy: "/").last(where: { !$0.isEmpty }) ?? ""
                 title = try node.text()
             }
             if let node = nodes.last as? TextNode {
@@ -256,7 +267,7 @@ struct BiqugeSearchResultHandler: HtmlHandler {
         var title: String = ""
         if let titleElement = try item.select("a.result-game-item-title-link").first() {
             title = try titleElement.text()
-            id = try titleElement.attr("href").replacingOccurrences(of: "book", with: "").replacingOccurrences(of: "/", with: "")
+            id = try titleElement.attr("href").components(separatedBy: "/").last(where: { !$0.isEmpty }) ?? ""
         }
         let introduce = try item.select("p.result-game-item-desc").first()?.text() ?? ""
         var author: String = ""

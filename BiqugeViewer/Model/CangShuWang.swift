@@ -37,6 +37,8 @@ enum CangShuApi: Api {
             return ["type": "all", "keyword": keyword, "page": page]
         }
     }
+    
+    var responseEncoding: String.Encoding { .utf8 }
 }
 
 struct CangShuSearchResultHandler: HtmlHandler {

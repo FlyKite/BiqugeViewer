@@ -22,6 +22,19 @@ protocol Api: URLRequestConvertible {
     static var host: String { get }
     var path: String { get }
     var parameters: Parameters? { get }
+    var responseEncoding: String.Encoding { get }
+}
+
+protocol ApiResponse {
+    static func parse(html: String) throws -> Self
+}
+
+protocol ApiV2: URLRequestConvertible {
+    associatedtype ResponseType: ApiResponse
+    var path: String { get }
+    var parameters: Parameters? { get }
+    var method: HTTPMethod { get }
+    var responseEncoding: String.Encoding { get }
 }
 
 protocol HtmlHandler {
@@ -33,22 +46,20 @@ class Network {
     static func request<Handler: HtmlHandler>(_ api: Api,
                                               handler: Handler,
                                               completion: @escaping (Result<Handler.Content, Error>) -> Void) {
-        let task = AF.request(api).responseString(encoding: .utf8) { (response) in
+        let task = AF.request(api).responseString(queue: .global(), encoding: api.responseEncoding) { (response) in
+            let result: Result<Handler.Content, Error>
             switch response.result {
             case let .success(html):
-                DispatchQueue.global().async {
-                    let result: Result<Handler.Content, Error>
-                    do {
-                        result = .success(try handler.handle(html: html, api: api))
-                    } catch {
-                        result = .failure(error)
-                    }
-                    DispatchQueue.main.async {
-                        completion(result)
-                    }
+                do {
+                    result = .success(try handler.handle(html: html, api: api))
+                } catch {
+                    result = .failure(error)
                 }
             case let .failure(error):
-                completion(.failure(error))
+                result = .failure(error)
+            }
+            DispatchQueue.main.async {
+                completion(result)
             }
         }
         task.resume()
