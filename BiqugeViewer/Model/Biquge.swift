@@ -9,6 +9,12 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
+extension String.Encoding {
+    static var gb2312: String.Encoding {
+        String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
+    }
+}
+
 /// 笔趣阁
 enum BiqugeApi: Api {
     case homeRecommend
@@ -16,12 +22,12 @@ enum BiqugeApi: Api {
     case bookContent(path: String)
     case searchBooks(keyword: String, page: Int)
     
-    static var host: String { "https://m.biquge.biz" }
+    static var host: String { "https://m.ahfgb.com" }
     
     static func coverUrl(id: String) -> String {
         guard id.count > 3 else { return "" }
         let endIndex = id.index(id.startIndex, offsetBy: id.count - 3)
-        return "https://www.biquge.biz/files/article/image/\(String(id[..<endIndex]))/\(id)/\(id)s.jpg"
+        return "https://m.ahfgb.com/img/\(String(id[..<endIndex]))/\(id).jpg"
     }
     
     var path: String {
@@ -46,14 +52,12 @@ enum BiqugeApi: Api {
              .bookContent:
             return nil
         case let .searchBooks(keyword, page):
-            return ["q": keyword, "p": page]
+            return ["keyword": keyword, "p": page]
         }
     }
     
     var responseEncoding: String.Encoding {
         switch self {
-        case .homeRecommend, .chapterList, .bookContent:
-            return String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
         default:
             return .utf8
         }
@@ -219,7 +223,7 @@ struct BiqugeBookChapterHandler: HtmlHandler {
     }
     
     private func getNextChapterLink(document: Document) throws -> String? {
-        guard let element = try document.select("td.next_chapter").select("a.jump-chapter-links").first() else {
+        guard let element = try document.select("td.next").select("a.chapterPageButton").first() else {
             return nil
         }
         let link = try element.attr("href")
@@ -253,7 +257,7 @@ struct BiqugeSearchResultHandler: HtmlHandler {
     
     func handle(html: String, api: Api) throws -> ([BookInfo], Bool) {
         let doc = try SwiftSoup.parse(html)
-        let items = try doc.select("div.result-item")
+        let items = try doc.select("div.bookbox")
         var results: [BookInfo] = []
         for item in items {
             results.append(try handle(item: item))
@@ -265,26 +269,14 @@ struct BiqugeSearchResultHandler: HtmlHandler {
     private func handle(item: Element) throws -> BookInfo {
         var id: String = ""
         var title: String = ""
-        if let titleElement = try item.select("a.result-game-item-title-link").first() {
+        if let titleElement = try item.select("i.iTit").select("a").first() {
             title = try titleElement.text()
             id = try titleElement.attr("href").components(separatedBy: "/").last(where: { !$0.isEmpty }) ?? ""
         }
-        let introduce = try item.select("p.result-game-item-desc").first()?.text() ?? ""
-        var author: String = ""
-        var category: String = ""
-        if let div = try item.select("div.result-game-item-info").first() {
-            func getText(element: Element) throws -> String {
-                guard element.children().count >= 2 else { return "" }
-                return try element.child(1).text()
-            }
-            let children = div.children()
-            if children.count > 1 {
-                author = try getText(element: children[0])
-            }
-            if children.count > 2 {
-                category = try getText(element: children[1])
-            }
-        }
+        let introduce = try item.select("div.intro_line").first()?.text() ?? ""
+        var author = try item.select("div.author").first()?.text() ?? ""
+        author = author.replacingOccurrences(of: "作者：", with: "")
+        let category = ""
         return BookInfo(id: id,
                         title: title,
                         author: author,
