@@ -25,9 +25,12 @@ enum BiqugeApi: Api {
     static var host: String { "https://m.ahfgb.com" }
     
     static func coverUrl(id: String) -> String {
-        guard id.count > 3 else { return "" }
-        let endIndex = id.index(id.startIndex, offsetBy: id.count - 3)
-        return "https://m.ahfgb.com/img/\(String(id[..<endIndex]))/\(id).jpg"
+        var id1 = "0"
+        if id.count > 3 {
+            let endIndex = id.index(id.startIndex, offsetBy: id.count - 3)
+            id1 = String(id[..<endIndex])
+        }
+        return "https://m.ahfgb.com/img/\(id1)/\(id).jpg"
     }
     
     var path: String {
@@ -35,9 +38,12 @@ enum BiqugeApi: Api {
         case .homeRecommend:
             return "/"
         case let .chapterList(bookId, page):
-            guard bookId.count > 3 else { return "" }
-            let endIndex = bookId.index(bookId.startIndex, offsetBy: bookId.count - 3)
-            return "/\(String(bookId[..<endIndex]))/\(bookId)/".appending(page > 1 ? "index_\(page).html" : "")
+            var id1 = "0"
+            if bookId.count > 3 {
+                let endIndex = bookId.index(bookId.startIndex, offsetBy: bookId.count - 3)
+                id1 = String(bookId[..<endIndex])
+            }
+            return "/\(id1)/\(bookId)/".appending(page > 1 ? "index_\(page).html" : "")
         case let .bookContent(path):
             return path
         case .searchBooks:
